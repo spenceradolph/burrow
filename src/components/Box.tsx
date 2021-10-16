@@ -1,4 +1,5 @@
 import { Properties } from 'csstype';
+import { Action } from '../StateManagement';
 import { MenuButtonStyle } from './Menu';
 
 const BoxStyle: Properties = {
@@ -17,14 +18,21 @@ export type BoxType = {
     externalAddress: string;
 };
 
-export const Box = (Props: { BoxData: BoxType; dispatch: any }) => {
-    const { dispatch } = Props;
-    const { id, name, internalAddress, externalAddress } = Props.BoxData;
+type BoxProps = {
+    BoxData: BoxType;
+    dispatch: React.Dispatch<Action>;
+};
 
-    // Actions have a 'type' and an optional 'payload' to be handled by the top-level reducer.
-    const deleteAction = {
-        type: 'delete',
-        payload: { id },
+export const Box = (Props: BoxProps) => {
+    const { BoxData, dispatch } = Props;
+    const { id, name, internalAddress, externalAddress } = BoxData;
+
+    const deleteSelf = () => {
+        // Dispatched Actions have a 'type' and an optional 'payload' to be handled by the top-level reducer.
+        dispatch({
+            type: 'delete',
+            payload: { id },
+        });
     };
 
     return (
@@ -33,7 +41,7 @@ export const Box = (Props: { BoxData: BoxType; dispatch: any }) => {
             <div>IntIP = {internalAddress}</div>
             <div>ExtIP = {externalAddress}</div>
             <button style={MenuButtonStyle}>Action 1</button>
-            <button onClick={() => dispatch(deleteAction)} style={MenuButtonStyle}>
+            <button onClick={deleteSelf} style={MenuButtonStyle}>
                 Delete
             </button>
         </div>

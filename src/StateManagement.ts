@@ -10,6 +10,7 @@ export type AppState = {
 
 /**
  * Any component can 'dispatch' an action to the StateReducer to change the state.
+ * Actions have a type and optional payload.
  */
 export type Action = {
     type: string;
@@ -17,7 +18,7 @@ export type Action = {
 };
 
 /**
- * Function that takes the current state and an action, and returns a new state (based on the type of action provided).
+ * A Reducer is a function that takes the current state and an action, and returns a new state (based on the type of action provided).
  */
 export const StateReducer = (currentState: AppState, action: Action): AppState => {
     const { type, payload } = action;

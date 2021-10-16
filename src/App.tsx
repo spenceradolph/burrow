@@ -1,6 +1,6 @@
 import { Properties } from 'csstype';
 import { useReducer } from 'react';
-import { Menu, Box } from './components';
+import { Menu, Box, Route } from './components';
 import { exampleBoxList, exampleRouteList } from './ExampleData';
 import { AppState, StateReducer } from './StateManagement';
 
@@ -10,26 +10,32 @@ const AppStyle: Properties = {
     backgroundColor: 'grey',
 };
 
-// TODO: remove example data in final product...
-const initialState: AppState = {
-    boxes: exampleBoxList,
-    routes: exampleRouteList,
-};
-
 /**
- * Top Level Component for entire react project.
+ * Top Level Component for entire web-app.
  */
 export const App = () => {
+    // State Management Setup
+    const locallyStoredState = localStorage.getItem('tunnel-tool-state');
+    const initialState: AppState = locallyStoredState ? JSON.parse(locallyStoredState) : { boxes: exampleBoxList, routes: exampleRouteList };
     const [state, dispatch] = useReducer(StateReducer, initialState);
 
-    const exampleBoxes = state.boxes.map((BoxData, index) => {
+    // Create components from state
+    const { boxes, routes } = state;
+
+    const exampleBoxes = boxes.map((BoxData, index) => {
         return <Box key={index} BoxData={BoxData} dispatch={dispatch} />;
     });
 
+    const exampleRoutes = routes.map((RouteData, index) => {
+        return <Route key={index} RouteData={RouteData} />;
+    });
+
+    // Return final HTML (JSX)
     return (
         <div style={AppStyle}>
-            <Menu />
+            <Menu state={state} />
             {exampleBoxes}
+            {exampleRoutes}
         </div>
     );
 };

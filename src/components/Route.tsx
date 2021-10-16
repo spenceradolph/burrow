@@ -10,8 +10,12 @@ export type RouteType = {
     port2: number;
 };
 
-export const Route = (Props: RouteType & { dispatch: any }) => {
-    const { box1, box2, port1, port2 } = Props;
+type RouteProps = {
+    RouteData: RouteType;
+};
+
+export const Route = (Props: RouteProps) => {
+    const { box1, box2, port1, port2 } = Props.RouteData;
 
     return (
         <div style={RouteStyle}>
