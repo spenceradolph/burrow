@@ -27,7 +27,9 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
             return currentState;
         }
 
-        default:
-            throw new Error('Unknown Type sent to StateReducer!');
+        default: {
+            const exhaustiveCheck: never = action;
+            throw new Error(`Unhandled Action Case: ${exhaustiveCheck}`);
+        }
     }
 };
