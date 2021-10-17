@@ -1,17 +1,12 @@
 import { Properties } from 'csstype';
-import { BoxType } from './Box';
+import { AppState } from '../state';
 
-const RouteStyle: Properties = {};
-
-export type RouteType = {
-    box1: BoxType['id'];
-    box2: BoxType['id'];
-    port1: number;
-    port2: number;
+const RouteStyle: Properties = {
+    backgroundColor: 'white',
 };
 
 type RouteProps = {
-    RouteData: RouteType;
+    RouteData: AppState['routes'][0];
 };
 
 export const Route = (Props: RouteProps) => {
