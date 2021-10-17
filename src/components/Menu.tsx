@@ -1,6 +1,6 @@
 import { Properties } from 'csstype';
 import { MouseEvent } from 'react';
-import { AppState, ClearLocalAction, ClearSpaceAction, Dispatch, SaveLocalAction } from '../state';
+import { Dispatch } from '../state';
 
 const MenuStyle: Properties = {
     height: '10%',
@@ -14,7 +14,6 @@ const MenuButtonStyle: Properties = {
 };
 
 type MenuProps = {
-    state: AppState;
     dispatch: Dispatch;
 };
 
@@ -28,26 +27,17 @@ export const Menu = (Props: MenuProps) => {
 
     const saveToLocal = (event: MouseEvent) => {
         event.stopPropagation();
-        const saveLocalAction: SaveLocalAction = {
-            type: 'save-local',
-        };
-        dispatch(saveLocalAction);
+        dispatch({ type: 'save-local' });
     };
 
     const clearLocal = (event: MouseEvent) => {
         event.stopPropagation();
-        const clearLocalAction: ClearLocalAction = {
-            type: 'clear-local',
-        };
-        dispatch(clearLocalAction);
+        dispatch({ type: 'clear-local' });
     };
 
     const clearBoxes = (event: MouseEvent) => {
         event.stopPropagation();
-        const clearAction: ClearSpaceAction = {
-            type: 'clear-app',
-        };
-        dispatch(clearAction);
+        dispatch({ type: 'clear-app' });
     };
 
     return (

@@ -24,7 +24,7 @@ export const App = () => {
 
     return (
         <div style={AppStyle}>
-            <Menu state={state} dispatch={dispatch} />
+            <Menu dispatch={dispatch} />
             {exampleBoxes}
             {exampleRoutes}
         </div>

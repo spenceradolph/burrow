@@ -1,6 +1,6 @@
 import { Properties } from 'csstype';
 import { MouseEvent } from 'react';
-import { AppState, DeleteAction, Dispatch } from '../state';
+import { AppState, Dispatch } from '../state';
 
 const BoxStyle: Properties = {
     margin: '10px',
@@ -27,11 +27,7 @@ export const Box = (Props: BoxProps) => {
 
     const deleteSelf = (event: MouseEvent) => {
         event.stopPropagation();
-        const action: DeleteAction = {
-            type: 'delete',
-            id,
-        };
-        dispatch(action);
+        dispatch({ type: 'delete', id });
     };
 
     return (

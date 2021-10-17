@@ -5,20 +5,20 @@ type BaseAction = {
     type: string;
 };
 
-export type ClearSpaceAction = BaseAction & {
+type ClearSpaceAction = BaseAction & {
     type: 'clear-app';
 };
 
-export type DeleteAction = BaseAction & {
+type DeleteAction = BaseAction & {
     type: 'delete';
     id: AppState['boxes'][0]['id'];
 };
 
-export type SaveLocalAction = BaseAction & {
+type SaveLocalAction = BaseAction & {
     type: 'save-local';
 };
 
-export type ClearLocalAction = BaseAction & {
+type ClearLocalAction = BaseAction & {
     type: 'clear-local';
 };
 
