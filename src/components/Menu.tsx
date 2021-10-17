@@ -30,7 +30,6 @@ export const Menu = (Props: MenuProps) => {
         event.stopPropagation();
         const saveLocalAction: SaveLocalAction = {
             type: 'save-local',
-            payload: null,
         };
         dispatch(saveLocalAction);
     };
@@ -39,7 +38,6 @@ export const Menu = (Props: MenuProps) => {
         event.stopPropagation();
         const clearLocalAction: ClearLocalAction = {
             type: 'clear-local',
-            payload: null,
         };
         dispatch(clearLocalAction);
     };
@@ -48,7 +46,6 @@ export const Menu = (Props: MenuProps) => {
         event.stopPropagation();
         const clearAction: ClearSpaceAction = {
             type: 'clear-app',
-            payload: null,
         };
         dispatch(clearAction);
     };

@@ -3,7 +3,6 @@ import { AppState } from './state';
 
 type BaseAction = {
     type: string;
-    payload: any;
 };
 
 export type ClearSpaceAction = BaseAction & {
@@ -12,9 +11,7 @@ export type ClearSpaceAction = BaseAction & {
 
 export type DeleteAction = BaseAction & {
     type: 'delete';
-    payload: {
-        id: AppState['boxes'][0]['id'];
-    };
+    id: AppState['boxes'][0]['id'];
 };
 
 export type SaveLocalAction = BaseAction & {

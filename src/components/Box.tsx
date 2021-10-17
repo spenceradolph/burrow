@@ -29,7 +29,7 @@ export const Box = (Props: BoxProps) => {
         event.stopPropagation();
         const action: DeleteAction = {
             type: 'delete',
-            payload: { id },
+            id,
         };
         dispatch(action);
     };

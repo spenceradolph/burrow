@@ -15,7 +15,7 @@ type RouteType = {
 };
 
 /**
- * Represents the entire application data.
+ * Represents the entire application data / schema.
  */
 export type AppState = {
     boxes: BoxType[];
