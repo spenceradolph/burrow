@@ -26,8 +26,8 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
         }
 
         case 'add-box': {
-            const boxes = [ ...currentState.boxes, action.box ];
-            return { ...currentState, boxes }
+            const boxes = [...currentState.boxes, action.box];
+            return { ...currentState, boxes };
         }
 
         case 'edit-box': {
@@ -36,27 +36,58 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
                 return action.editedBox;
             });
 
-            return { ...currentState, boxes }
+            return { ...currentState, boxes };
         }
 
         case 'edit-service': {
-            return {...currentState, servicePopup: action.editedPopup}
+            return { ...currentState, servicePopup: action.editedPopup };
         }
 
         case 'cancel-add-service': {
-            return {...currentState, servicePopup: {...currentState.servicePopup, isHidden: true}}
+            return { ...currentState, servicePopup: { ...currentState.servicePopup, isHidden: true } };
         }
 
         case 'add-service': {
-            return {...currentState, servicePopup: {...currentState.servicePopup, isHidden: false, boxId: action.boxId}}
+            return { ...currentState, servicePopup: { ...currentState.servicePopup, isHidden: false, boxId: action.boxId } };
         }
 
         case 'submit-service': {
             const boxes = currentState.boxes.map((currentbox) => {
                 if (currentState.servicePopup.boxId !== currentbox.id) return currentbox;
-                return {...currentbox, services: [...currentbox.services, action.service]}
+                return { ...currentbox, services: [...currentbox.services, action.service] };
             });
-            return {...currentState, servicePopup: {...currentState.servicePopup, isHidden: true}, boxes }
+            return { ...currentState, servicePopup: { ...currentState.servicePopup, isHidden: true }, boxes };
+        }
+
+        case 'connect-start-action': {
+            return {
+                ...currentState,
+                connectionSetup: { ...currentState.connectionSetup, isActive: true, localPort: action.connectingPort, box1Id: action.connectingBox },
+            };
+        }
+
+        case 'connect-cancel-action': {
+            return { ...currentState, connectionSetup: { ...currentState.connectionSetup, isActive: false } };
+        }
+
+        case 'connect-final-action': {
+            if (!currentState.connectionSetup.isActive) return currentState;
+
+            const boxes = currentState.boxes.map((currentBox) => {
+                if (currentBox.id !== currentState.connectionSetup.box1Id) return currentBox;
+                return {
+                    ...currentBox,
+                    connections: [
+                        ...currentBox.connections,
+                        {
+                            boxId: action.box2Id,
+                            localPort: currentState.connectionSetup.localPort,
+                            port: action.servicePort,
+                        },
+                    ],
+                };
+            });
+            return { ...currentState, boxes, connectionSetup: { ...currentState.connectionSetup, isActive: false } };
         }
 
         default: {

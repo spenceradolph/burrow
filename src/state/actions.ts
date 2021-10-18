@@ -24,32 +24,61 @@ type ClearLocalAction = BaseAction & {
 
 type AddBoxAction = BaseAction & {
     type: 'add-box';
-    box: AppState['boxes'][0]
-}
+    box: AppState['boxes'][0];
+};
 
 type EditBoxAction = BaseAction & {
     type: 'edit-box';
-    editedBox: AppState['boxes'][0]
-}
+    editedBox: AppState['boxes'][0];
+};
 
 type AddServiceAction = BaseAction & {
     type: 'add-service';
-    boxId: AppState['boxes'][0]['id']
-}
+    boxId: AppState['boxes'][0]['id'];
+};
 
 type SubmitServiceAction = BaseAction & {
     type: 'submit-service';
     service: AppState['boxes'][0]['services'][0];
-}
+};
 
 type CancelAddServiceAction = BaseAction & {
-    type: 'cancel-add-service'
-}
+    type: 'cancel-add-service';
+};
 
 type EditServiceAction = BaseAction & {
     type: 'edit-service';
     editedPopup: AppState['servicePopup'];
-}
+};
 
-export type AppAction = ClearSpaceAction | DeleteAction | SaveLocalAction | ClearLocalAction | AddBoxAction | EditBoxAction | EditServiceAction | CancelAddServiceAction | AddServiceAction | SubmitServiceAction;
+type ConnectStartAction = BaseAction & {
+    type: 'connect-start-action';
+    connectingBox: AppState['boxes'][0]['id'];
+    connectingPort: number;
+};
+
+type ConnectFinalAction = BaseAction & {
+    type: 'connect-final-action';
+    box2Id: AppState['boxes'][0]['id'];
+    servicePort: number;
+};
+
+type ConnectCancelAction = BaseAction & {
+    type: 'connect-cancel-action';
+};
+
+export type AppAction =
+    | ClearSpaceAction
+    | DeleteAction
+    | SaveLocalAction
+    | ClearLocalAction
+    | AddBoxAction
+    | EditBoxAction
+    | EditServiceAction
+    | CancelAddServiceAction
+    | AddServiceAction
+    | SubmitServiceAction
+    | ConnectStartAction
+    | ConnectCancelAction
+    | ConnectFinalAction;
 export type Dispatch = React.Dispatch<AppAction>;

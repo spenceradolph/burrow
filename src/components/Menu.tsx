@@ -52,13 +52,18 @@ export const Menu = (Props: MenuProps) => {
             internalAddress: '0.0.0.0',
             externalAddress: '0.0.0.0',
             services: [],
-            connections: []
-        }
-        dispatch({type: 'add-box', box: testBox})
-    }
+            connections: [],
+        };
+        dispatch({ type: 'add-box', box: testBox });
+    };
+
+    const cancelConnection = (event: MouseEvent) => {
+        event.stopPropagation();
+        dispatch({ type: 'connect-cancel-action' });
+    };
 
     return (
-        <div style={MenuStyle}>
+        <div style={{ ...MenuStyle, backgroundColor: state.connectionSetup.isActive ? 'yellow' : 'cyan' }}>
             <p>Menu Component</p>
             <button style={MenuButtonStyle} onClick={alertClick}>
                 Import
@@ -71,6 +76,9 @@ export const Menu = (Props: MenuProps) => {
             </button>
             <button style={MenuButtonStyle} onClick={addBox}>
                 Add box
+            </button>
+            <button style={{ ...MenuButtonStyle, visibility: state.connectionSetup.isActive ? 'visible' : 'hidden' }} onClick={cancelConnection}>
+                Cancel Connection
             </button>
             <button style={{ ...MenuButtonStyle, float: 'right' }} onClick={clearLocal}>
                 Clear Local Storage

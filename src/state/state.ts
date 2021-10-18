@@ -3,13 +3,13 @@ import { exampleInitialState } from './exampleData';
 type ServiceType = {
     name: string;
     port: number;
-}
+};
 
 type ConnectionType = {
     boxId: BoxType['id'];
-    service: ServiceType;
-    localPort?: number;
-}
+    port: ServiceType['port'];
+    localPort: number;
+};
 
 type BoxType = {
     id: number;
@@ -21,18 +21,25 @@ type BoxType = {
 };
 
 type ServicePopup = {
-    isHidden: boolean,
-    boxId: BoxType['id'],
-    name: ServiceType['name'],
-    port: ServiceType['port']
-}
+    isHidden: boolean;
+    boxId: BoxType['id'];
+    name: ServiceType['name'];
+    port: ServiceType['port'];
+};
+
+type ConnectionSetup = {
+    isActive: boolean;
+    box1Id: BoxType['id'];
+    localPort: number;
+};
 
 /**
  * Represents the entire application data / schema.
  */
 export type AppState = {
     boxes: BoxType[];
-    servicePopup: ServicePopup
+    servicePopup: ServicePopup;
+    connectionSetup: ConnectionSetup;
 };
 
 // Configure initial state from local storage (if possible)
