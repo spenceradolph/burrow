@@ -11,22 +11,16 @@ const AppStyle: Properties = {
 
 export const App = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
-
     const { boxes, routes } = state;
 
-    const exampleBoxes = boxes.map((BoxData, index) => {
-        return <Box key={index} BoxData={BoxData} dispatch={dispatch} />;
-    });
-
-    const exampleRoutes = routes.map((RouteData, index) => {
-        return <Route key={index} RouteData={RouteData} />;
-    });
+    const boxComponents = boxes.map((BoxData, index) => <Box key={index} BoxData={BoxData} routes={routes} dispatch={dispatch} />);
+    const routeComponents = routes.map((RouteData, index) => <Route key={index} RouteData={RouteData} />);
 
     return (
         <div style={AppStyle}>
             <Menu dispatch={dispatch} />
-            {exampleBoxes}
-            {exampleRoutes}
+            {boxComponents}
+            {routeComponents}
         </div>
     );
 };

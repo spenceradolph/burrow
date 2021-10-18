@@ -38,12 +38,21 @@ const centerStyle: Properties = {
 
 type BoxProps = {
     BoxData: AppState['boxes'][0];
+    routes: AppState['routes'];
     dispatch: Dispatch;
 };
 
 export const Box = (Props: BoxProps) => {
-    const { BoxData, dispatch } = Props;
+    const { BoxData, dispatch, routes } = Props;
     const { id, name, internalAddress, externalAddress } = BoxData;
+
+    const rightAnchorPoints = routes
+        .filter(({ box1 }) => box1 === id)
+        .map(({ port1 }) => <div id={`box${id}right${port1}`} style={portAnchorBoxStyle}></div>);
+
+    const leftAnchorPoints = routes
+        .filter(({ box2 }) => box2 === id)
+        .map(({ port2 }) => <div id={`box${id}left${port2}`} style={portAnchorBoxStyle}></div>);
 
     const deleteSelf = (event: MouseEvent) => {
         event.stopPropagation();
@@ -53,23 +62,8 @@ export const Box = (Props: BoxProps) => {
     return (
         <Draggable onDrag={useXarrow()} onStop={useXarrow()}>
             <div style={BoxStyle} id={`${id}`}>
-                <div style={{ ...parentBox, float: 'left' }}>
-                    <div id={`box${id}left${1}`} style={portAnchorBoxStyle}></div>
-                    <div id={`box${id}left${2}`} style={portAnchorBoxStyle}></div>
-                    <div id={`box${id}left${3}`} style={portAnchorBoxStyle}></div>
-                    <div id={`box${id}left${4}`} style={portAnchorBoxStyle}></div>
-                    <div id={`box${id}left${5}`} style={portAnchorBoxStyle}></div>
-                    <div id={`box${id}left${6}`} style={portAnchorBoxStyle}></div>
-                </div>
-                <div style={{ ...parentBox, float: 'right' }}>
-                    <div id={`box${id}right${1}`} style={portAnchorBoxStyle}></div>
-                    <div id={`box${id}right${2}`} style={portAnchorBoxStyle}></div>
-                    <div id={`box${id}right${3}`} style={portAnchorBoxStyle}></div>
-                    <div id={`box${id}right${4}`} style={portAnchorBoxStyle}></div>
-                    <div id={`box${id}right${5}`} style={portAnchorBoxStyle}></div>
-                    <div id={`box${id}right${6}`} style={portAnchorBoxStyle}></div>
-                </div>
-
+                <div style={{ ...parentBox, float: 'left' }}>{leftAnchorPoints}</div>
+                <div style={{ ...parentBox, float: 'right' }}>{rightAnchorPoints}</div>
                 <div style={centerStyle}>Name = {name}</div>
                 <div style={centerStyle}>IntIP = {internalAddress}</div>
                 <div style={centerStyle}>ExtIP = {externalAddress}</div>

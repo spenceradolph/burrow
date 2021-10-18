@@ -11,10 +11,9 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
         }
 
         case 'delete': {
-            const boxes = currentState.boxes.filter((BoxData) => {
-                return BoxData.id !== action.id;
-            });
-            return { ...currentState, boxes };
+            const boxes = currentState.boxes.filter(({ id }) => id !== action.id);
+            const routes = currentState.routes.filter(({ box1, box2 }) => box1 !== action.id && box2 !== action.id);
+            return { ...currentState, boxes, routes };
         }
 
         case 'save-local': {
