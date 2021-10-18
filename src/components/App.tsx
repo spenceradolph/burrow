@@ -1,6 +1,6 @@
 import { Properties } from 'csstype';
-import { useReducer } from 'react';
-import { Box, Menu, Route } from '../components';
+import { useReducer, useState } from 'react';
+import { Box, Menu, Popup } from '../components';
 import { initialState, reducer } from '../state';
 
 const AppStyle: Properties = {
@@ -10,17 +10,15 @@ const AppStyle: Properties = {
 };
 
 export const App = () => {
-    const [state, dispatch] = useReducer(reducer, initialState);
-    const { boxes, routes } = state;
+    const [state, dispatch] = useReducer(reducer, initialState); 
 
-    const boxComponents = boxes.map((BoxData, index) => <Box key={index} BoxData={BoxData} routes={routes} dispatch={dispatch} />);
-    const routeComponents = routes.map((RouteData, index) => <Route key={index} RouteData={RouteData} />);
+    const boxComponents = state.boxes.map((BoxData, index) => <Box key={index} BoxData={BoxData} dispatch={dispatch} />);
 
     return (
         <div style={AppStyle}>
-            <Menu dispatch={dispatch} />
+            <Menu state={state} dispatch={dispatch} />
+            <Popup servicePopup={state.servicePopup} dispatch={dispatch}/>
             {boxComponents}
-            {routeComponents}
         </div>
     );
 };

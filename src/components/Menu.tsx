@@ -1,6 +1,6 @@
 import { Properties } from 'csstype';
 import { MouseEvent } from 'react';
-import { Dispatch } from '../state';
+import { AppState, Dispatch } from '../state';
 
 const MenuStyle: Properties = {
     height: '10%',
@@ -15,10 +15,12 @@ const MenuButtonStyle: Properties = {
 
 type MenuProps = {
     dispatch: Dispatch;
+    state: AppState;
+    myNewProps?: string;
 };
 
 export const Menu = (Props: MenuProps) => {
-    const { dispatch } = Props;
+    const { dispatch, state } = Props;
 
     const alertClick = (event: MouseEvent) => {
         event.stopPropagation();
@@ -40,6 +42,21 @@ export const Menu = (Props: MenuProps) => {
         dispatch({ type: 'clear-app' });
     };
 
+    const addBox = (event: MouseEvent) => {
+        event.stopPropagation();
+        const { boxes } = state;
+        const newId = boxes.length ? boxes.slice(-1)[0].id + 1 : 1;
+        const testBox: AppState['boxes'][0] = {
+            id: newId,
+            name: 'CHANGEME',
+            internalAddress: '0.0.0.0',
+            externalAddress: '0.0.0.0',
+            services: [],
+            connections: []
+        }
+        dispatch({type: 'add-box', box: testBox})
+    }
+
     return (
         <div style={MenuStyle}>
             <p>Menu Component</p>
@@ -51,6 +68,9 @@ export const Menu = (Props: MenuProps) => {
             </button>
             <button style={MenuButtonStyle} onClick={clearBoxes}>
                 Clear All
+            </button>
+            <button style={MenuButtonStyle} onClick={addBox}>
+                Add box
             </button>
             <button style={{ ...MenuButtonStyle, float: 'right' }} onClick={clearLocal}>
                 Clear Local Storage

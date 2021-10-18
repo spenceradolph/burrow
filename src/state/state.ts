@@ -1,25 +1,38 @@
 import { exampleInitialState } from './exampleData';
 
+type ServiceType = {
+    name: string;
+    port: number;
+}
+
+type ConnectionType = {
+    boxId: BoxType['id'];
+    service: ServiceType;
+    localPort?: number;
+}
+
 type BoxType = {
     id: number;
     name: string;
     internalAddress: string;
     externalAddress: string;
+    services: ServiceType[];
+    connections: ConnectionType[];
 };
 
-type RouteType = {
-    box1: BoxType['id'];
-    box2: BoxType['id'];
-    port1: number;
-    port2: number;
-};
+type ServicePopup = {
+    isHidden: boolean,
+    boxId: BoxType['id'],
+    name: ServiceType['name'],
+    port: ServiceType['port']
+}
 
 /**
  * Represents the entire application data / schema.
  */
 export type AppState = {
     boxes: BoxType[];
-    routes: RouteType[];
+    servicePopup: ServicePopup
 };
 
 // Configure initial state from local storage (if possible)

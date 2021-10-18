@@ -7,13 +7,12 @@ import { AppState, LOCAL_STORAGE_ID } from './state';
 export const reducer = (currentState: AppState, action: AppAction): AppState => {
     switch (action.type) {
         case 'clear-app': {
-            return { ...currentState, boxes: [], routes: [] };
+            return { ...currentState, boxes: [] };
         }
 
         case 'delete': {
             const boxes = currentState.boxes.filter(({ id }) => id !== action.id);
-            const routes = currentState.routes.filter(({ box1, box2 }) => box1 !== action.id && box2 !== action.id);
-            return { ...currentState, boxes, routes };
+            return { ...currentState, boxes };
         }
 
         case 'save-local': {
@@ -24,6 +23,40 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
         case 'clear-local': {
             localStorage.removeItem(LOCAL_STORAGE_ID);
             return currentState;
+        }
+
+        case 'add-box': {
+            const boxes = [ ...currentState.boxes, action.box ];
+            return { ...currentState, boxes }
+        }
+
+        case 'edit-box': {
+            const boxes = currentState.boxes.map((currentBox) => {
+                if (currentBox.id !== action.editedBox.id) return currentBox;
+                return action.editedBox;
+            });
+
+            return { ...currentState, boxes }
+        }
+
+        case 'edit-service': {
+            return {...currentState, servicePopup: action.editedPopup}
+        }
+
+        case 'cancel-add-service': {
+            return {...currentState, servicePopup: {...currentState.servicePopup, isHidden: true}}
+        }
+
+        case 'add-service': {
+            return {...currentState, servicePopup: {...currentState.servicePopup, isHidden: false, boxId: action.boxId}}
+        }
+
+        case 'submit-service': {
+            const boxes = currentState.boxes.map((currentbox) => {
+                if (currentState.servicePopup.boxId !== currentbox.id) return currentbox;
+                return {...currentbox, services: [...currentbox.services, action.service]}
+            });
+            return {...currentState, servicePopup: {...currentState.servicePopup, isHidden: true}, boxes }
         }
 
         default: {

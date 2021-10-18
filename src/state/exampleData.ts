@@ -3,18 +3,15 @@ import { AppState } from './state';
 // TODO: remove from final release
 
 const exampleBoxList: AppState['boxes'] = [
-    { id: 1, name: 'Box1', internalAddress: '1.0.0.1', externalAddress: '2.0.0.1' },
-    { id: 2, name: 'Box2', internalAddress: '1.0.0.2', externalAddress: '2.0.0.2' },
-    { id: 3, name: 'Box3', internalAddress: '1.0.0.3', externalAddress: '2.0.0.3' },
-];
-
-const exampleRouteList: AppState['routes'] = [
-    { box1: 1, port1: 1000, box2: 2, port2: 2000 },
-    { box1: 1, port1: 3000, box2: 2, port2: 4000 },
-    { box1: 2, port1: 3000, box2: 3, port2: 4000 },
+    { id: 1, name: 'CHANGEME', internalAddress: '1.0.0.1', externalAddress: '2.0.0.1', services: [], connections: [] }
 ];
 
 export const exampleInitialState: AppState = {
     boxes: exampleBoxList,
-    routes: exampleRouteList,
+    servicePopup: {
+        isHidden: true,
+        name: 'ServiceName',
+        port: 0,
+        boxId: -1
+    }
 };
