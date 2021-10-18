@@ -1,9 +1,5 @@
-import { Properties } from 'csstype';
+import Xarrow from 'react-xarrows';
 import { AppState } from '../state';
-
-const RouteStyle: Properties = {
-    backgroundColor: 'white',
-};
 
 type RouteProps = {
     RouteData: AppState['routes'][0];
@@ -12,11 +8,5 @@ type RouteProps = {
 export const Route = (Props: RouteProps) => {
     const { box1, box2, port1, port2 } = Props.RouteData;
 
-    return (
-        <div style={RouteStyle}>
-            <p>
-                Route from {box1}:{port1} to {box2}:{port2}
-            </p>
-        </div>
-    );
+    return <Xarrow start={`box${box1}right${1}`} end={`box${box2}left${1}`} labels={{ start: `${port1}`, end: `${port2}` }} />;
 };
