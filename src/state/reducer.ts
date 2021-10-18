@@ -101,7 +101,7 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
                 return {
                     ...currentBox,
                     connections: currentBox.connections.filter((connection) => {
-                        return connection.box2Id !== action.connection.box2Id || connection.port !== action.connection.port;
+                        return connection.box2Id !== action.connection.box2Id || connection.port !== action.connection.port || connection.localPort !== action.connection.localPort;
                     }),
                 };
             });
