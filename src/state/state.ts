@@ -6,7 +6,7 @@ type ServiceType = {
 };
 
 type ConnectionType = {
-    boxId: BoxType['id'];
+    box2Id: BoxType['id'];
     port: ServiceType['port'];
     localPort: number;
 };

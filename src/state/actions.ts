@@ -53,8 +53,8 @@ type EditServiceAction = BaseAction & {
 
 type ConnectStartAction = BaseAction & {
     type: 'connect-start-action';
-    connectingBox: AppState['boxes'][0]['id'];
-    connectingPort: number;
+    box1Id: AppState['boxes'][0]['id'];
+    localPort: number;
 };
 
 type ConnectFinalAction = BaseAction & {
@@ -65,6 +65,12 @@ type ConnectFinalAction = BaseAction & {
 
 type ConnectCancelAction = BaseAction & {
     type: 'connect-cancel-action';
+};
+
+type RemoveConnectionAction = BaseAction & {
+    type: 'connect-remove-action';
+    boxId: AppState['boxes'][0]['id'];
+    connection: AppState['boxes'][0]['connections'][0];
 };
 
 export type AppAction =
@@ -80,5 +86,6 @@ export type AppAction =
     | SubmitServiceAction
     | ConnectStartAction
     | ConnectCancelAction
-    | ConnectFinalAction;
+    | ConnectFinalAction
+    | RemoveConnectionAction;
 export type Dispatch = React.Dispatch<AppAction>;

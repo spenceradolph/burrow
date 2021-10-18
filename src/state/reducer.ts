@@ -31,9 +31,10 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
         }
 
         case 'edit-box': {
+            const { editedBox } = action;
             const boxes = currentState.boxes.map((currentBox) => {
-                if (currentBox.id !== action.editedBox.id) return currentBox;
-                return action.editedBox;
+                if (currentBox.id !== editedBox.id) return currentBox;
+                return editedBox;
             });
 
             return { ...currentState, boxes };
@@ -44,30 +45,31 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
         }
 
         case 'cancel-add-service': {
-            return { ...currentState, servicePopup: { ...currentState.servicePopup, isHidden: true } };
+            return { ...currentState, servicePopup: { isHidden: true, boxId: -1, name: '', port: -1 } };
         }
 
         case 'add-service': {
-            return { ...currentState, servicePopup: { ...currentState.servicePopup, isHidden: false, boxId: action.boxId } };
+            const { boxId } = action;
+            return { ...currentState, servicePopup: { isHidden: false, boxId, name: 'ServiceName', port: 0 } };
         }
 
         case 'submit-service': {
+            const { boxId } = currentState.servicePopup;
             const boxes = currentState.boxes.map((currentbox) => {
-                if (currentState.servicePopup.boxId !== currentbox.id) return currentbox;
+                if (currentbox.id !== boxId) return currentbox;
                 return { ...currentbox, services: [...currentbox.services, action.service] };
             });
-            return { ...currentState, servicePopup: { ...currentState.servicePopup, isHidden: true }, boxes };
+
+            return { ...currentState, boxes, servicePopup: { isHidden: true, boxId: -1, name: '', port: -1 } };
         }
 
         case 'connect-start-action': {
-            return {
-                ...currentState,
-                connectionSetup: { ...currentState.connectionSetup, isActive: true, localPort: action.connectingPort, box1Id: action.connectingBox },
-            };
+            const { box1Id, localPort } = action;
+            return { ...currentState, connectionSetup: { isActive: true, box1Id, localPort } };
         }
 
         case 'connect-cancel-action': {
-            return { ...currentState, connectionSetup: { ...currentState.connectionSetup, isActive: false } };
+            return { ...currentState, connectionSetup: { isActive: false, box1Id: -1, localPort: -1 } };
         }
 
         case 'connect-final-action': {
@@ -80,14 +82,27 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
                     connections: [
                         ...currentBox.connections,
                         {
-                            boxId: action.box2Id,
+                            box2Id: action.box2Id,
                             localPort: currentState.connectionSetup.localPort,
                             port: action.servicePort,
                         },
                     ],
                 };
             });
-            return { ...currentState, boxes, connectionSetup: { ...currentState.connectionSetup, isActive: false } };
+
+            return { ...currentState, boxes, connectionSetup: { isActive: false, box1Id: -1, localPort: -1 } };
+        }
+
+        case 'connect-remove-action': {
+            const boxes = currentState.boxes.map((currentBox) => {
+                if (currentBox.id !== action.boxId) return currentBox;
+                const connections = currentBox.connections.filter((currentConnection) => {
+                    return currentConnection.box2Id !== action.connection.box2Id && currentConnection.port !== action.connection.port;
+                });
+                return { ...currentBox, connections };
+            });
+
+            return { ...currentState, boxes };
         }
 
         default: {

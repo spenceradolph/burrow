@@ -51,13 +51,17 @@ export const Box = (Props: BoxProps) => {
 
     const addConnection = (event: MouseEvent) => {
         event.stopPropagation();
-        dispatch({ type: 'connect-start-action', connectingBox: id, connectingPort: 4444 });
+        dispatch({ type: 'connect-start-action', box1Id: id, localPort: 4444 }); // TODO: handle local port options?
     };
 
     const submitConnection = (event: MouseEvent, servicePort: number) => {
         event.stopPropagation();
-        // TODO: stop here if not currently in connection setup mode
         dispatch({ type: 'connect-final-action', box2Id: id, servicePort });
+    };
+
+    const removeConnection = (event: MouseEvent, connection: AppState['boxes'][0]['connections'][0]) => {
+        event.stopPropagation();
+        dispatch({ type: 'connect-remove-action', boxId: id, connection });
     };
 
     const serviceDivs = services.map((service) => {
@@ -75,14 +79,18 @@ export const Box = (Props: BoxProps) => {
 
     const connectionDivs = connections.map((connection) => {
         return (
-            <div style={{ position: 'relative', float: 'right' }} id={`box${id}connectionport${connection.localPort}`}>
+            <div
+                onClick={(event) => removeConnection(event, connection)}
+                style={{ position: 'relative', float: 'right' }}
+                id={`box${id}connectionport${connection.localPort}`}
+            >
                 {connection.localPort}
             </div>
         );
     });
 
     const connectionArrows = connections.map((connection) => {
-        return <Xarrow start={`box${id}connectionport${connection.localPort}`} end={`box${connection.boxId}serviceport${connection.port}`} />;
+        return <Xarrow start={`box${id}connectionport${connection.localPort}`} end={`box${connection.box2Id}serviceport${connection.port}`} />;
     });
 
     return (
