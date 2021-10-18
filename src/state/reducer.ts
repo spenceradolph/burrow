@@ -98,10 +98,12 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
         case 'connect-remove-action': {
             const boxes = currentState.boxes.map((currentBox) => {
                 if (currentBox.id !== action.boxId) return currentBox;
-                const connections = currentBox.connections.filter((currentConnection) => {
-                    return currentConnection.box2Id !== action.connection.box2Id && currentConnection.port !== action.connection.port;
-                });
-                return { ...currentBox, connections };
+                return {
+                    ...currentBox,
+                    connections: currentBox.connections.filter((connection) => {
+                        return connection.box2Id !== action.connection.box2Id || connection.port !== action.connection.port;
+                    }),
+                };
             });
 
             return { ...currentState, boxes };
