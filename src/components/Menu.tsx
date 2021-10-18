@@ -22,11 +22,6 @@ type MenuProps = {
 export const Menu = (Props: MenuProps) => {
     const { dispatch, state } = Props;
 
-    const alertClick = (event: MouseEvent) => {
-        event.stopPropagation();
-        alert(`TODO: Implement ${event.currentTarget.innerHTML}`);
-    };
-
     const saveToLocal = (event: MouseEvent) => {
         event.stopPropagation();
         dispatch({ type: 'save-local' });
@@ -42,42 +37,36 @@ export const Menu = (Props: MenuProps) => {
         dispatch({ type: 'clear-app' });
     };
 
+    const cancelConnection = (event: MouseEvent) => {
+        event.stopPropagation();
+        dispatch({ type: 'connect-cancel-action' });
+    };
+
     const addBox = (event: MouseEvent) => {
         event.stopPropagation();
-        const { boxes } = state;
-        const newId = boxes.length ? boxes.slice(-1)[0].id + 1 : 1;
-        const testBox: AppState['boxes'][0] = {
-            id: newId,
+        const defaultBox: AppState['boxes'][0] = {
+            id: state.boxes.length ? state.boxes.slice(-1)[0].id + 1 : 1,
             name: 'CHANGEME',
             internalAddress: '0.0.0.0',
             externalAddress: '0.0.0.0',
             services: [],
             connections: [],
         };
-        dispatch({ type: 'add-box', box: testBox });
+        dispatch({ type: 'add-box', box: defaultBox });
     };
 
-    const cancelConnection = (event: MouseEvent) => {
-        event.stopPropagation();
-        dispatch({ type: 'connect-cancel-action' });
-    };
+    const backgroundColor = state.connectionSetup.isActive ? 'yellow' : 'cyan';
+    const visibility = state.connectionSetup.isActive ? 'visible' : 'hidden';
 
     return (
-        <div style={{ ...MenuStyle, backgroundColor: state.connectionSetup.isActive ? 'yellow' : 'cyan' }}>
-            <p>Menu Component</p>
-            <button style={MenuButtonStyle} onClick={alertClick}>
-                Import
-            </button>
-            <button style={MenuButtonStyle} onClick={alertClick}>
-                Export
-            </button>
+        <div style={{ ...MenuStyle, backgroundColor }}>
             <button style={MenuButtonStyle} onClick={clearBoxes}>
                 Clear All
             </button>
             <button style={MenuButtonStyle} onClick={addBox}>
                 Add box
             </button>
-            <button style={{ ...MenuButtonStyle, visibility: state.connectionSetup.isActive ? 'visible' : 'hidden' }} onClick={cancelConnection}>
+            <button style={{ ...MenuButtonStyle, visibility }} onClick={cancelConnection}>
                 Cancel Connection
             </button>
             <button style={{ ...MenuButtonStyle, float: 'right' }} onClick={clearLocal}>

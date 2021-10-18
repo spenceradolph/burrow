@@ -12,13 +12,13 @@ const AppStyle: Properties = {
 export const App = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    const boxComponents = state.boxes.map((BoxData, index) => <Box key={index} BoxData={BoxData} dispatch={dispatch} />);
-
     return (
         <div style={AppStyle}>
             <Menu state={state} dispatch={dispatch} />
             <Popup servicePopup={state.servicePopup} dispatch={dispatch} />
-            {boxComponents}
+            {state.boxes.map((BoxData, index) => (
+                <Box key={index} BoxData={BoxData} dispatch={dispatch} />
+            ))}
         </div>
     );
 };

@@ -21,16 +21,14 @@ type BoxType = {
 };
 
 type ServicePopup = {
-    isHidden: boolean;
+    isActive: boolean;
     boxId: BoxType['id'];
-    name: ServiceType['name'];
-    port: ServiceType['port'];
 };
 
 type ConnectionSetup = {
     isActive: boolean;
     box1Id: BoxType['id'];
-    localPort: number;
+    localPort: ConnectionType['port'];
 };
 
 /**

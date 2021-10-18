@@ -37,12 +37,20 @@ export const Box = (Props: BoxProps) => {
         dispatch({ type: 'delete', id });
     };
 
-    const changeName = (event: ChangeEvent<HTMLInputElement>) =>
-        dispatch({ type: 'edit-box', editedBox: { ...BoxData, name: event.currentTarget.value } });
-    const changeInternal = (event: ChangeEvent<HTMLInputElement>) =>
-        dispatch({ type: 'edit-box', editedBox: { ...BoxData, internalAddress: event.currentTarget.value } });
-    const changeExternal = (event: ChangeEvent<HTMLInputElement>) =>
-        dispatch({ type: 'edit-box', editedBox: { ...BoxData, externalAddress: event.currentTarget.value } });
+    const changeName = (event: ChangeEvent<HTMLInputElement>) => {
+        event.stopPropagation();
+        dispatch({ type: 'edit-box', editedBox: { ...BoxData, name: event.target.value } });
+    };
+
+    const changeInternal = (event: ChangeEvent<HTMLInputElement>) => {
+        event.stopPropagation();
+        dispatch({ type: 'edit-box', editedBox: { ...BoxData, internalAddress: event.target.value } });
+    };
+
+    const changeExternal = (event: ChangeEvent<HTMLInputElement>) => {
+        event.stopPropagation();
+        dispatch({ type: 'edit-box', editedBox: { ...BoxData, externalAddress: event.target.value } });
+    };
 
     const addService = (event: MouseEvent) => {
         event.stopPropagation();
@@ -51,68 +59,56 @@ export const Box = (Props: BoxProps) => {
 
     const addConnection = (event: MouseEvent) => {
         event.stopPropagation();
-        dispatch({ type: 'connect-start-action', box1Id: id, localPort: 4444 }); // TODO: handle local port options?
+        dispatch({ type: 'connect-start-action', box1Id: id, localPort: connections.length + 10 }); // TODO: handle local port options?
     };
 
-    const submitConnection = (event: MouseEvent, servicePort: number) => {
+    const submitConnection = (event: MouseEvent) => {
         event.stopPropagation();
+        const servicePort = parseInt(event.currentTarget.getAttribute('data-port')!);
         dispatch({ type: 'connect-final-action', box2Id: id, servicePort });
     };
 
-    const removeConnection = (event: MouseEvent, connection: AppState['boxes'][0]['connections'][0]) => {
+    const removeConnection = (event: MouseEvent) => {
         event.stopPropagation();
+        const connection = JSON.parse(event.currentTarget.getAttribute('data-connection')!);
         dispatch({ type: 'connect-remove-action', boxId: id, connection });
     };
 
-    const serviceDivs = services.map((service) => {
-        return (
-            <div
-                onClick={(event) => {
-                    submitConnection(event, service.port);
-                }}
-                id={`box${id}serviceport${service.port}`}
-            >
-                {service.name}:{service.port}
-            </div>
-        );
-    });
-
-    const connectionDivs = connections.map((connection) => {
-        return (
-            <div
-                onClick={(event) => removeConnection(event, connection)}
-                style={{ position: 'relative', float: 'right' }}
-                id={`box${id}connectionport${connection.localPort}`}
-            >
-                {connection.localPort}
-            </div>
-        );
-    });
-
-    const connectionArrows = connections.map((connection) => {
-        return <Xarrow start={`box${id}connectionport${connection.localPort}`} end={`box${connection.box2Id}serviceport${connection.port}`} />;
-    });
-
     return (
         <Draggable onDrag={useXarrow()} onStop={useXarrow()}>
-            <div style={BoxStyle} id={`${id}`}>
+            <div style={{ ...BoxStyle }}>
                 Name:
-                <input type={'text'} style={{ ...centerStyle, marginLeft: '30px' }} value={name} onChange={changeName} />
-                InternalIP: <input type={'text'} style={centerStyle} value={internalAddress} onChange={changeInternal} />
-                ExternalIP: <input type={'text'} style={centerStyle} value={externalAddress} onChange={changeExternal} />
+                <input type={'text'} value={name} onChange={changeName} style={{ ...centerStyle, marginLeft: '30px' }} />
+                InternalIP: <input type={'text'} value={internalAddress} onChange={changeInternal} style={centerStyle} />
+                ExternalIP: <input type={'text'} value={externalAddress} onChange={changeExternal} style={centerStyle} />
                 <br />
                 <button onClick={deleteSelf} style={BoxButtonStyle}>
                     Delete
                 </button>
-                <button style={BoxButtonStyle} onClick={addService}>
+                <button onClick={addService} style={BoxButtonStyle}>
                     Add Service
                 </button>
-                <button style={BoxButtonStyle} onClick={addConnection}>
+                <button onClick={addConnection} style={BoxButtonStyle}>
                     Connect
                 </button>
-                {serviceDivs}
-                {connectionDivs}
-                {connectionArrows}
+                {services.map((service) => {
+                    return (
+                        <div id={`box${id}serviceport${service.port}`} data-port={service.port} onClick={submitConnection}>
+                            {service.name}:{service.port}
+                        </div>
+                    );
+                })}
+                {connections.map((connection) => {
+                    const style: Properties = { position: 'relative', float: 'right' };
+                    return (
+                        <div id={`box${id}connectionport${connection.localPort}`} data-connection={JSON.stringify(connection)} onClick={removeConnection} style={style}>
+                            {connection.localPort}
+                        </div>
+                    );
+                })}
+                {connections.map((connection) => (
+                    <Xarrow start={`box${id}connectionport${connection.localPort}`} end={`box${connection.box2Id}serviceport${connection.port}`} />
+                ))}
             </div>
         </Draggable>
     );

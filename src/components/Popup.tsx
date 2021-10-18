@@ -1,5 +1,5 @@
 import { Properties } from 'csstype';
-import { ChangeEvent, MouseEvent } from 'react';
+import { ChangeEvent, MouseEvent, useState } from 'react';
 import { AppState, Dispatch } from '../state';
 
 const PopupStyle: Properties = {
@@ -18,25 +18,15 @@ type PopupProps = {
 };
 
 export const Popup = (Props: PopupProps) => {
-    const { dispatch } = Props;
-    const { isHidden, name, port, boxId } = Props.servicePopup;
+    const { dispatch, servicePopup } = Props;
+    const { isActive } = servicePopup;
 
-    const visibility = isHidden ? 'hidden' : 'visible';
-
-    const changeName = (event: ChangeEvent<HTMLInputElement>) =>
-        dispatch({ type: 'edit-service', editedPopup: { boxId, isHidden, name: event.currentTarget.value, port } });
-    const changePort = (event: ChangeEvent<HTMLInputElement>) =>
-        dispatch({ type: 'edit-service', editedPopup: { boxId, isHidden, name, port: parseInt(event.currentTarget.value) } });
+    const [name, setName] = useState('ServiceName');
+    const [port, setPort] = useState(0);
 
     const addService = (event: MouseEvent) => {
         event.stopPropagation();
-        dispatch({
-            type: 'submit-service',
-            service: {
-                name,
-                port,
-            },
-        });
+        dispatch({ type: 'submit-service', service: { name, port } });
     };
 
     const closePopup = (event: MouseEvent) => {
@@ -44,11 +34,22 @@ export const Popup = (Props: PopupProps) => {
         dispatch({ type: 'cancel-add-service' });
     };
 
+    const changeName = (event: ChangeEvent<HTMLInputElement>) => {
+        event.stopPropagation();
+        setName(event.target.value);
+    };
+
+    const changePort = (event: ChangeEvent<HTMLInputElement>) => {
+        event.stopPropagation();
+        setPort(parseInt(event.target.value));
+    };
+
     return (
-        <div style={{ ...PopupStyle, visibility }}>
-            Box we are changing: {boxId}
+        <div style={{ ...PopupStyle, visibility: isActive ? 'visible' : 'hidden' }}>
             Name: <input type={'text'} value={name} onChange={changeName} />
+            <br />
             Port: <input type={'number'} value={port} onChange={changePort} />
+            <br />
             <button onClick={addService}>Add Service</button>
             <button onClick={closePopup}>Exit</button>
         </div>

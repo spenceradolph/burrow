@@ -17,9 +17,7 @@ const exampleBoxList: AppState['boxes'] = [
 export const exampleInitialState: AppState = {
     boxes: exampleBoxList,
     servicePopup: {
-        isHidden: true,
-        name: 'ServiceName',
-        port: 0,
+        isActive: false,
         boxId: -1,
     },
     connectionSetup: {
