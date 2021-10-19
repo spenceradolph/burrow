@@ -13,20 +13,20 @@ const PopupStyle: Properties = {
 };
 
 type PopupProps = {
-    servicePopup: AppState['servicePopup'];
+    state: AppState;
     dispatch: Dispatch;
 };
 
 export const Popup = (Props: PopupProps) => {
-    const { dispatch, servicePopup } = Props;
-    const { isActive } = servicePopup;
+    const { state, dispatch } = Props;
+    const { serviceSetupIsActive, newService } = state.metaData;
 
     const [name, setName] = useState('ServiceName');
-    const [port, setPort] = useState(0);
+    const [port, setPort] = useState(22);
 
     const addService = (event: MouseEvent) => {
         event.stopPropagation();
-        dispatch({ type: 'submit-service', service: { name, port } });
+        dispatch({ type: 'add-service', serviceToAdd: { ...newService, name, port } });
     };
 
     const closePopup = (event: MouseEvent) => {
@@ -45,7 +45,7 @@ export const Popup = (Props: PopupProps) => {
     };
 
     return (
-        <div style={{ ...PopupStyle, visibility: isActive ? 'visible' : 'hidden' }}>
+        <div style={{ ...PopupStyle, visibility: serviceSetupIsActive ? 'visible' : 'hidden' }}>
             Name: <input type={'text'} value={name} onChange={changeName} />
             <br />
             Port: <input type={'number'} value={port} onChange={changePort} />

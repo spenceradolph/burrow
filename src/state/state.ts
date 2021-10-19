@@ -1,43 +1,32 @@
 import { exampleInitialState } from './exampleData';
 
-type ServiceType = {
-    name: string;
-    port: number;
-};
-
-type ConnectionType = {
-    box2Id: BoxType['id'];
-    port: ServiceType['port'];
-    localPort: number;
-};
-
-type TunnelType = {
-    clientId: BoxType['id'];
-    clientPort: ServiceType['port'];
-    hopId: BoxType['id'];
-    hopService: ServiceType['port'];
-    targetId: BoxType['id'];
-    targetPort: ServiceType['port'];
-};
-
 type BoxType = {
     id: number;
     name: string;
     internalAddress: string;
     externalAddress: string;
-    services: ServiceType[];
-    connections: ConnectionType[];
 };
 
-type ServicePopup = {
-    isActive: boolean;
+type ServiceType = {
     boxId: BoxType['id'];
+    port: number;
+    name: string;
 };
 
-type ConnectionSetup = {
-    isActive: boolean;
+type ConnectionType = {
     box1Id: BoxType['id'];
-    localPort: ConnectionType['port'];
+    box1Port: ServiceType['port'];
+    box2Id: BoxType['id'];
+    box2Port: ServiceType['port'];
+};
+
+type TunnelType = {
+    clientId: BoxType['id'];
+    clientPort: ServiceType['port']; // locally exposed listening port that gets forwarded to target
+    hopId: BoxType['id'];
+    hopPort: ServiceType['port']; // usually SSH
+    targetId: BoxType['id'];
+    targetPort: ServiceType['port'];
 };
 
 /**
@@ -45,14 +34,17 @@ type ConnectionSetup = {
  */
 export type AppState = {
     boxes: BoxType[];
-    servicePopup: ServicePopup;
-    connectionSetup: ConnectionSetup;
-    tunnelSetup: {
-        isActive: boolean;
-        stage: number;
-        tunnel: TunnelType;
-    };
+    services: ServiceType[];
+    connections: ConnectionType[];
     tunnels: TunnelType[];
+    metaData: {
+        serviceSetupIsActive: boolean; // display the popup / yellow
+        newService: ServiceType; // TODO: port and name aren't actually stored here, they come from the action, consider refactoring this object? (or keep for simplicity) (same for similar values)
+        connectionSetupIsActive: boolean; // display yellow
+        newConnection: ConnectionType;
+        tunnelSetupIsActive: boolean; // clicking stages
+        newTunnel: TunnelType;
+    };
 };
 
 // Configure initial state from local storage (if possible)
