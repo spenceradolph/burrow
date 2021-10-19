@@ -1,6 +1,6 @@
 import { Properties } from 'csstype';
-import { ChangeEvent, MouseEvent } from 'react';
-import { default as Draggable } from 'react-draggable';
+import { ChangeEvent, MouseEvent, useState } from 'react';
+import Draggable from 'react-draggable';
 import { useXarrow } from 'react-xarrows';
 import { ConnectionStartPoint, Service, TunnelClientPoint, TunnelHopPoint } from '../components';
 import { AppState, defaultEmptyApp, Dispatch } from '../state';
@@ -32,7 +32,7 @@ type BoxProps = {
 
 export const Box = (Props: BoxProps) => {
     const { BoxData, dispatch, state } = Props;
-    const { id, name, internalAddress, externalAddress } = BoxData;
+    const { id, name, internalAddress, externalAddress, notes } = BoxData;
     const { services, connections } = state;
 
     const deleteSelf = (event: MouseEvent) => {
@@ -53,6 +53,11 @@ export const Box = (Props: BoxProps) => {
     const changeExternal = (event: ChangeEvent<HTMLInputElement>) => {
         event.stopPropagation();
         dispatch({ type: 'edit-box', boxToEdit: { ...BoxData, externalAddress: event.target.value } });
+    };
+
+    const changeNotes = (event: ChangeEvent<HTMLTextAreaElement>) => {
+        event.stopPropagation();
+        dispatch({ type: 'edit-box', boxToEdit: { ...BoxData, notes: event.target.value } });
     };
 
     const addService = (event: MouseEvent) => {
@@ -97,10 +102,12 @@ export const Box = (Props: BoxProps) => {
             return <ConnectionStartPoint key={index} connection={thisConn} state={state} dispatch={dispatch} />;
         });
 
+    const [notesHidden, setNotesHidden] = useState(true);
+
     return (
-        <Draggable onDrag={useXarrow()} onStop={useXarrow()}>
-            <div style={{ ...BoxStyle }} onClick={boxClick}>
-                Name:
+        <Draggable axis="y" onDrag={useXarrow()} onStop={useXarrow()} handle="strong">
+            <div style={{ ...BoxStyle }} onClick={boxClick} className="handle">
+                <strong>Name:</strong>
                 <input type={'text'} value={name} onChange={changeName} style={{ ...centerStyle, marginLeft: '30px' }} />
                 InternalIP: <input type={'text'} value={internalAddress} onChange={changeInternal} style={centerStyle} />
                 ExternalIP: <input type={'text'} value={externalAddress} onChange={changeExternal} style={centerStyle} />
@@ -118,6 +125,18 @@ export const Box = (Props: BoxProps) => {
                 {connectionStartPoints}
                 {tunnelClientPoints}
                 {tunnelHopPoints}
+                <br />
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setNotesHidden(!notesHidden);
+                    }}
+                >
+                    X
+                </button>
+                <div style={{ visibility: notesHidden ? 'hidden' : 'visible' }}>
+                    <textarea onChange={changeNotes}>{notes}</textarea>
+                </div>
             </div>
         </Draggable>
     );

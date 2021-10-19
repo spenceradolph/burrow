@@ -36,9 +36,9 @@ export const defaultEmptyApp: AppState = {
 export const exampleInitialState: AppState = {
     ...defaultEmptyApp,
     boxes: [
-        { id: 1, name: 'Box1', internalAddress: '1.0.0.1', externalAddress: '2.0.0.1' },
-        { id: 2, name: 'Box2', internalAddress: '1.0.0.2', externalAddress: '2.0.0.2' },
-        { id: 3, name: 'Box3', internalAddress: '1.0.0.2', externalAddress: '2.0.0.2' },
+        { id: 1, name: 'Box1', internalAddress: '1.0.0.1', externalAddress: '2.0.0.1', notes: '' },
+        { id: 2, name: 'Box2', internalAddress: '1.0.0.2', externalAddress: '2.0.0.2', notes: '' },
+        { id: 3, name: 'Box3', internalAddress: '1.0.0.3', externalAddress: '2.0.0.3', notes: '' },
     ],
     services: [
         { id: 1, boxId: 2, port: 22, name: 'SSH' },

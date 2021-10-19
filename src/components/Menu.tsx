@@ -49,6 +49,7 @@ export const Menu = (Props: MenuProps) => {
             name: 'CHANGEME',
             internalAddress: '0.0.0.0',
             externalAddress: '0.0.0.0',
+            notes: '',
         };
         dispatch({ type: 'add-box', boxToAdd: defaultBox });
     };
