@@ -114,10 +114,10 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
         }
 
         case 'cancel-tunnel': {
-            return { ...currentState, tunnelSetup: { ...currentState.tunnelSetup, isActive: false, stage: 0 } };
+            return { ...currentState, tunnelSetup: { ...currentState.tunnelSetup, isActive: false, stage: -1 } };
         }
 
-        case 'tunnel-stage-1': {
+        case 'tunnel-stage-0': {
             return { ...currentState, tunnelSetup: { ...currentState.tunnelSetup, stage: 1, tunnel: { ...currentState.tunnelSetup.tunnel, clientId: action.box.id } } };
         }
 
@@ -155,7 +155,12 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
                         }),
                     };
                 });
-            return { ...currentState, boxes };
+            const tunnels = currentState.tunnels.filter((tunnel) => {
+                return (
+                    (tunnel.hopId !== action.boxId || tunnel.hopService !== action.servicePort) && (tunnel.targetId !== action.boxId || tunnel.targetPort !== action.servicePort)
+                );
+            });
+            return { ...currentState, boxes, tunnels };
         }
 
         default: {

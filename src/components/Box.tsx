@@ -70,9 +70,11 @@ export const Box = (Props: BoxProps) => {
         if (state.tunnelSetup.isActive) {
             if (state.tunnelSetup.stage === 1) {
                 dispatch({ type: 'tunnel-stage-2', box: BoxData, service: servicePort });
+                return;
             }
             if (state.tunnelSetup.stage === 2) {
                 dispatch({ type: 'tunnel-stage-3', box: BoxData, service: servicePort });
+                return;
             }
         }
 
@@ -81,7 +83,9 @@ export const Box = (Props: BoxProps) => {
             return;
         }
 
-        dispatch({ type: 'delete-service-action', boxId: id, servicePort });
+        if (!state.connectionSetup.isActive && !state.tunnelSetup.isActive) {
+            dispatch({ type: 'delete-service-action', boxId: id, servicePort });
+        }
     };
 
     const removeConnection = (event: MouseEvent) => {
@@ -96,7 +100,7 @@ export const Box = (Props: BoxProps) => {
         event.stopPropagation();
         if (state.tunnelSetup.isActive) {
             if (state.tunnelSetup.stage === 0) {
-                dispatch({ type: 'tunnel-stage-1', box: BoxData });
+                dispatch({ type: 'tunnel-stage-0', box: BoxData });
             }
         }
     };
@@ -105,8 +109,25 @@ export const Box = (Props: BoxProps) => {
         .filter((tunnel) => {
             return tunnel.hopId === id;
         })
-        .map((tunnel) => {
-            return <p>Hop Here!</p>;
+        .map((tunnel, index) => {
+            return (
+                <>
+                    <p style={{ textAlign: 'center' }}>Service: {tunnel.hopService}</p>
+                    <div key={index} id={`tunnelHop-${JSON.stringify(tunnel)}}`} style={{ textAlign: 'center' }} />
+                </>
+            );
+        });
+
+    const tunnelClientPoints = state.tunnels
+        .filter((tunnel) => {
+            return tunnel.clientId === id;
+        })
+        .map((tunnel, index) => {
+            return (
+                <div key={index} id={`tunnelClient-${JSON.stringify(tunnel)}`} style={{ position: 'relative', float: 'right' }}>
+                    <input type="number" value="2222" style={{ width: '50px' }} />
+                </div>
+            );
         });
 
     return (
@@ -126,24 +147,25 @@ export const Box = (Props: BoxProps) => {
                 <button onClick={addConnection} style={BoxButtonStyle}>
                     Connect
                 </button>
-                {services.map((service) => {
+                {services.map((service, index) => {
                     return (
-                        <div id={`box${id}serviceport${service.port}`} data-port={service.port} onClick={clickService}>
+                        <div key={index} id={`box${id}serviceport${service.port}`} data-port={service.port} onClick={clickService}>
                             {service.name}:{service.port}
                         </div>
                     );
                 })}
-                {connections.map((connection) => {
+                {connections.map((connection, index) => {
                     const style: Properties = { position: 'relative', float: 'right' };
                     return (
-                        <div id={`box${id}connectionport${connection.localPort}`} data-connection={JSON.stringify(connection)} onClick={removeConnection} style={style}>
+                        <div key={index} id={`box${id}connectionport${connection.localPort}`} data-connection={JSON.stringify(connection)} onClick={removeConnection} style={style}>
                             {connection.localPort === -1 ? 'x' : connection.localPort}
                         </div>
                     );
                 })}
-                {connections.map((connection) => (
-                    <Xarrow start={`box${id}connectionport${connection.localPort}`} end={`box${connection.box2Id}serviceport${connection.port}`} />
+                {connections.map((connection, index) => (
+                    <Xarrow key={index} start={`box${id}connectionport${connection.localPort}`} end={`box${connection.box2Id}serviceport${connection.port}`} />
                 ))}
+                {tunnelClientPoints}
                 {tunnelHopPoints}
             </div>
         </Draggable>

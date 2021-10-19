@@ -51,5 +51,5 @@ export const exampleInitialState: AppState = {
             targetPort: -1,
         },
     },
-    tunnels: [],
+    tunnels: [{ clientId: 1, clientPort: 2222, hopId: 2, hopService: 22, targetId: 3, targetPort: 80 }],
 };

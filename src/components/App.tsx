@@ -1,5 +1,6 @@
 import { Properties } from 'csstype';
 import { useReducer } from 'react';
+import Xarrow from 'react-xarrows';
 import { Box, Menu, Popup } from '../components';
 import { initialState, reducer } from '../state';
 
@@ -19,6 +20,19 @@ export const App = () => {
             {state.boxes.map((BoxData, index) => (
                 <Box key={index} BoxData={BoxData} dispatch={dispatch} state={state} />
             ))}
+            {state.tunnels.map((tunnel, index) => {
+                return (
+                    <>
+                        <Xarrow
+                            arrowHeadProps={{ style: { visibility: 'hidden' } }}
+                            endAnchor={'middle'}
+                            start={`tunnelClient-${JSON.stringify(tunnel)}`}
+                            end={`tunnelHop-${JSON.stringify(tunnel)}}`}
+                        />
+                        <Xarrow startAnchor={'middle'} start={`tunnelHop-${JSON.stringify(tunnel)}}`} end={`box${tunnel.targetId}serviceport${tunnel.targetPort}`} />
+                    </>
+                );
+            })}
         </div>
     );
 };

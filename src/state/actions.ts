@@ -82,12 +82,13 @@ type DeleteServiceAction = BaseAction & {
 type StartTunnelSelectionAction = BaseAction & {
     type: 'start-tunnel';
 };
+
 type CancelTunnelSelectionAction = BaseAction & {
     type: 'cancel-tunnel';
 };
 
-type Stage1TunnelAction = BaseAction & {
-    type: 'tunnel-stage-1';
+type Stage0TunnelAction = BaseAction & {
+    type: 'tunnel-stage-0';
     box: AppState['boxes'][0];
 };
 
@@ -120,7 +121,7 @@ export type AppAction =
     | RemoveConnectionAction
     | StartTunnelSelectionAction
     | CancelTunnelSelectionAction
-    | Stage1TunnelAction
+    | Stage0TunnelAction
     | Stage2TunnelAction
     | Stage3TunnelAction
     | DeleteServiceAction;
