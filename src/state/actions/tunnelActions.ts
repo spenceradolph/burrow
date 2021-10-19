@@ -39,4 +39,12 @@ type Stage2TunnelAction = BaseAction & {
     targetService: AppState['services'][0];
 };
 
-export type AllTunnelActions = StartTunnelSelectionAction | CancelTunnelSelectionAction | Stage0TunnelAction | Stage1TunnelAction | Stage2TunnelAction;
+/**
+ * Delete a tunnel by clicking the hop point.
+ */
+type DeleteTunnelAction = BaseAction & {
+    type: 'delete-tunnel';
+    tunnel: AppState['tunnels'][0];
+};
+
+export type AllTunnelActions = StartTunnelSelectionAction | CancelTunnelSelectionAction | Stage0TunnelAction | Stage1TunnelAction | Stage2TunnelAction | DeleteTunnelAction;

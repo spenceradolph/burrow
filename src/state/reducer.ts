@@ -98,10 +98,8 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
             });
             const tunnels = currentState.tunnels.filter((thisTunn) => {
                 return (
-                    thisTunn.hopId !== serviceToDelete.boxId ||
-                    thisTunn.hopPort !== serviceToDelete.port ||
-                    thisTunn.targetId !== serviceToDelete.boxId ||
-                    thisTunn.targetPort !== serviceToDelete.port
+                    (thisTunn.hopId !== serviceToDelete.boxId || thisTunn.hopPort !== serviceToDelete.port) &&
+                    (thisTunn.targetId !== serviceToDelete.boxId || thisTunn.targetPort !== serviceToDelete.port)
                 );
             });
             return { ...currentState, services, connections, tunnels };
@@ -228,6 +226,13 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
                     newTunnel: defaultEmptyApp.metaData.newTunnel,
                 },
             };
+        }
+
+        case 'delete-tunnel': {
+            const tunnels = currentState.tunnels.filter((thisTunn) => {
+                return action.tunnel !== thisTunn;
+            });
+            return { ...currentState, tunnels };
         }
 
         default: {

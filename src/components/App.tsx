@@ -1,9 +1,7 @@
 import { Properties } from 'csstype';
 import { useReducer } from 'react';
-import { Box, Menu, Popup } from '../components';
+import { Box, Connection, Menu, Popup, Tunnel } from '../components';
 import { initialState, reducer } from '../state';
-import { Connection } from './Connection';
-import { Tunnel } from './Tunnel';
 
 const AppStyle: Properties = {
     height: '100vh',

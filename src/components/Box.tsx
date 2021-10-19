@@ -2,6 +2,7 @@ import { Properties } from 'csstype';
 import { ChangeEvent, MouseEvent } from 'react';
 import { default as Draggable } from 'react-draggable';
 import { useXarrow } from 'react-xarrows';
+import { ConnectionStartPoint, Service, TunnelClientPoint, TunnelHopPoint } from '../components';
 import { AppState, defaultEmptyApp, Dispatch } from '../state';
 
 const BoxStyle: Properties = {
@@ -64,39 +65,6 @@ export const Box = (Props: BoxProps) => {
         dispatch({ type: 'start-add-connection', box1: BoxData }); // TODO: handle local port options?
     };
 
-    const clickService = (event: MouseEvent) => {
-        event.stopPropagation();
-        const service: AppState['services'][0] = JSON.parse(event.currentTarget.getAttribute('data-service')!);
-
-        if (state.metaData.tunnelSetupIsActive) {
-            if (state.metaData.newTunnel.clientId !== defaultEmptyApp.metaData.newTunnel.clientId && state.metaData.newTunnel.hopId === defaultEmptyApp.metaData.newTunnel.hopId) {
-                dispatch({ type: 'tunnel-stage-1', hopService: service });
-                return;
-            }
-            if (state.metaData.newTunnel.hopId !== defaultEmptyApp.metaData.newTunnel.hopId) {
-                dispatch({ type: 'tunnel-stage-2', targetService: service });
-                return;
-            }
-        }
-
-        if (state.metaData.connectionSetupIsActive) {
-            dispatch({ type: 'add-connection', serviceToConnect: service });
-            return;
-        }
-
-        if (!state.metaData.connectionSetupIsActive && !state.metaData.tunnelSetupIsActive && !state.metaData.serviceSetupIsActive) {
-            dispatch({ type: 'delete-service', serviceToDelete: service });
-        }
-    };
-
-    const removeConnection = (event: MouseEvent) => {
-        event.stopPropagation();
-        if (!state.metaData.tunnelSetupIsActive) {
-            const connection = JSON.parse(event.currentTarget.getAttribute('data-connection')!);
-            dispatch({ type: 'delete-connection', connectionToRemove: connection });
-        }
-    };
-
     const boxClick = (event: MouseEvent) => {
         event.stopPropagation();
         if (state.metaData.tunnelSetupIsActive) {
@@ -107,54 +75,27 @@ export const Box = (Props: BoxProps) => {
     };
 
     const tunnelClientPoints = state.tunnels
-        .filter((tunnel) => {
-            return tunnel.clientId === id;
-        })
+        .filter((tunnel) => tunnel.clientId === id)
         .map((tunnel, index) => {
-            return (
-                <div key={index} id={`tunnelClient-${JSON.stringify(tunnel)}`} style={{ position: 'relative', float: 'right' }}>
-                    <input type="number" value="2222" style={{ width: '50px' }} />
-                </div>
-            );
+            return <TunnelClientPoint key={index} tunnel={tunnel} />;
         });
 
     const tunnelHopPoints = state.tunnels
-        .filter((tunnel) => {
-            return tunnel.hopId === id;
-        })
+        .filter((tunnel) => tunnel.hopId === id)
         .map((tunnel, index) => {
-            return (
-                <>
-                    <p style={{ textAlign: 'center' }}>Service: {tunnel.hopPort}</p>
-                    <div key={index} id={`tunnelHop-${JSON.stringify(tunnel)}}`} style={{ textAlign: 'center' }} />
-                </>
-            );
+            return <TunnelHopPoint key={index} tunnel={tunnel} state={state} dispatch={dispatch} />;
         });
 
     const serviceComponents = services
-        .filter((thisService) => {
-            return thisService.boxId === id;
-        })
+        .filter((thisService) => thisService.boxId === id)
         .map((thisService, index) => {
-            // TODO: change how the id's are configured and try to only use JSON.stringify for the entire id if possible (connection component doesn't know the name of service tho...)
-            return (
-                <div key={index} id={`service-${thisService.boxId}-${thisService.port}`} data-service={JSON.stringify(thisService)} onClick={clickService}>
-                    {thisService.name}:{thisService.port}
-                </div>
-            );
+            return <Service key={index} service={thisService} state={state} dispatch={dispatch} />;
         });
 
     const connectionStartPoints = connections
-        .filter((thisConn) => {
-            return thisConn.box1Id === id;
-        })
+        .filter((thisConn) => thisConn.box1Id === id)
         .map((thisConn, index) => {
-            const style: Properties = { position: 'relative', float: 'right' };
-            return (
-                <div key={index} id={`connection-${JSON.stringify(thisConn)}`} data-connection={JSON.stringify(thisConn)} onClick={removeConnection} style={style}>
-                    {thisConn.box1Port === -1 ? 'x' : thisConn.box1Port}
-                </div>
-            );
+            return <ConnectionStartPoint key={index} connection={thisConn} state={state} dispatch={dispatch} />;
         });
 
     return (
