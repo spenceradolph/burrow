@@ -76,7 +76,7 @@ type RemoveConnectionAction = BaseAction & {
 type DeleteServiceAction = BaseAction & {
     type: 'delete-service-action';
     boxId: AppState['boxes'][0]['id'];
-    service: AppState['boxes'][0]['services'][0];
+    servicePort: AppState['boxes'][0]['services'][0]['port'];
 };
 
 type StartTunnelSelectionAction = BaseAction & {
@@ -122,5 +122,6 @@ export type AppAction =
     | CancelTunnelSelectionAction
     | Stage1TunnelAction
     | Stage2TunnelAction
-    | Stage3TunnelAction;
+    | Stage3TunnelAction
+    | DeleteServiceAction;
 export type Dispatch = React.Dispatch<AppAction>;

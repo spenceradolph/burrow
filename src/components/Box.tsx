@@ -76,7 +76,12 @@ export const Box = (Props: BoxProps) => {
             }
         }
 
-        dispatch({ type: 'connect-final-action', box2Id: id, servicePort });
+        if (state.connectionSetup.isActive) {
+            dispatch({ type: 'connect-final-action', box2Id: id, servicePort });
+            return;
+        }
+
+        dispatch({ type: 'delete-service-action', boxId: id, servicePort });
     };
 
     const removeConnection = (event: MouseEvent) => {

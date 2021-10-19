@@ -136,6 +136,28 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
             };
         }
 
+        case 'delete-service-action': {
+            const boxes = currentState.boxes
+                .map((currentBox) => {
+                    if (currentBox.id !== action.boxId) return currentBox;
+                    return {
+                        ...currentBox,
+                        services: currentBox.services.filter((service) => {
+                            return service.port !== action.servicePort;
+                        }),
+                    };
+                })
+                .map((currentBox) => {
+                    return {
+                        ...currentBox,
+                        connections: currentBox.connections.filter((connection) => {
+                            return connection.port !== action.servicePort || connection.box2Id !== action.boxId;
+                        }),
+                    };
+                });
+            return { ...currentState, boxes };
+        }
+
         default: {
             const exhaustiveCheck: never = action;
             throw new Error(`Unhandled Action Case: ${exhaustiveCheck}`);
