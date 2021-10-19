@@ -1,6 +1,6 @@
 import { Properties } from 'csstype';
 import { useReducer } from 'react';
-import { Box, Connection, Menu, Popup, Tunnel } from '../components';
+import { Box, Connection, Menu, ServicePopup, Tunnel } from '../components';
 import { initialState, reducer } from '../state';
 
 const AppStyle: Properties = {
@@ -19,7 +19,7 @@ export const App = () => {
     return (
         <div style={AppStyle}>
             <Menu state={state} dispatch={dispatch} />
-            <Popup state={state} dispatch={dispatch} />
+            <ServicePopup state={state} dispatch={dispatch} />
             {boxComponents}
             {connectionComponents}
             {tunnelComponents}

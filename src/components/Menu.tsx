@@ -77,7 +77,7 @@ export const Menu = (Props: MenuProps) => {
             <button style={MenuButtonStyle} onClick={addTunnel}>
                 Add tunnel
             </button>
-            <button style={MenuButtonStyle} onClick={cancelTunnel}>
+            <button style={{ ...MenuButtonStyle, visibility: state.metaData.tunnelSetupIsActive ? 'visible' : 'hidden' }} onClick={cancelTunnel}>
                 cancel tunnel
             </button>
             <button style={{ ...MenuButtonStyle, visibility }} onClick={cancelConnection}>
