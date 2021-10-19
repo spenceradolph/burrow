@@ -1,5 +1,5 @@
+import { BaseAction } from '../actions';
 import { AppState } from '../state';
-import { BaseAction } from './';
 
 /**
  * Clicked 'connect' button on a box, next step will be clicking another box's service.
