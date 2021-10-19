@@ -67,10 +67,8 @@ export const Box = (Props: BoxProps) => {
 
     const boxClick = (event: MouseEvent) => {
         event.stopPropagation();
-        if (state.metaData.tunnelSetupIsActive) {
-            if (state.metaData.newTunnel.clientId === defaultEmptyApp.metaData.newTunnel.clientId) {
-                dispatch({ type: 'tunnel-stage-0', clientBox: BoxData });
-            }
+        if (state.metaData.tunnelSetupIsActive && state.metaData.newTunnel.clientId === defaultEmptyApp.metaData.newTunnel.clientId) {
+            dispatch({ type: 'tunnel-stage-0', clientBox: BoxData });
         }
     };
 

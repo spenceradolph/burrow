@@ -63,11 +63,8 @@ export const Menu = (Props: MenuProps) => {
         dispatch({ type: 'cancel-tunnel' });
     };
 
-    const backgroundColor = state.metaData.connectionSetupIsActive || state.metaData.tunnelSetupIsActive ? 'yellow' : 'cyan';
-    const visibility = state.metaData.connectionSetupIsActive ? 'visible' : 'hidden';
-
     return (
-        <div style={{ ...MenuStyle, backgroundColor }}>
+        <div style={{ ...MenuStyle, backgroundColor: state.metaData.connectionSetupIsActive || state.metaData.tunnelSetupIsActive ? 'yellow' : 'cyan' }}>
             <button style={MenuButtonStyle} onClick={clearBoxes}>
                 Clear All
             </button>
@@ -80,7 +77,7 @@ export const Menu = (Props: MenuProps) => {
             <button style={{ ...MenuButtonStyle, visibility: state.metaData.tunnelSetupIsActive ? 'visible' : 'hidden' }} onClick={cancelTunnel}>
                 cancel tunnel
             </button>
-            <button style={{ ...MenuButtonStyle, visibility }} onClick={cancelConnection}>
+            <button style={{ ...MenuButtonStyle, visibility: state.metaData.connectionSetupIsActive ? 'visible' : 'hidden' }} onClick={cancelConnection}>
                 Cancel Connection
             </button>
             <button style={{ ...MenuButtonStyle, float: 'right' }} onClick={clearLocal}>
