@@ -1,139 +1,222 @@
-import { AppAction } from './actions';
+import { AllActions } from './actions';
+import { defaultEmptyApp } from './exampleData';
 import { AppState, LOCAL_STORAGE_ID } from './state';
 
 /**
  * A Reducer is a function that takes the current state and an action, and returns a new state (based on the type of action provided).
  */
-export const reducer = (currentState: AppState, action: AppAction): AppState => {
+export const reducer = (currentState: AppState, action: AllActions): AppState => {
     switch (action.type) {
-        case 'clear-app': {
-            return { ...currentState, boxes: [] };
+        case 'delete-all-objects': {
+            return defaultEmptyApp;
         }
 
-        case 'delete': {
-            const boxes = currentState.boxes
-                .filter((currentBox) => {
-                    return currentBox.id !== action.id;
-                })
-                .map((currentBox) => {
-                    return {
-                        ...currentBox,
-                        connections: currentBox.connections.filter((connection) => {
-                            return connection.box2Id !== action.id;
-                        }),
-                    };
-                });
-            return { ...currentState, boxes };
-        }
-
-        case 'save-local': {
+        case 'save-localstorage': {
             localStorage.setItem(LOCAL_STORAGE_ID, JSON.stringify(currentState));
             return currentState;
         }
 
-        case 'clear-local': {
+        case 'delete-localstorage': {
             localStorage.removeItem(LOCAL_STORAGE_ID);
             return currentState;
         }
 
         case 'add-box': {
-            return { ...currentState, boxes: [...currentState.boxes, action.box] };
+            return { ...currentState, boxes: [...currentState.boxes, action.boxToAdd] };
+        }
+
+        case 'delete-box': {
+            const { id } = action.boxToDelete;
+            const serviceIdsToDelete = currentState.services.filter((thisService) => thisService.boxId === id).map((thisService) => thisService.id);
+            const connectionIdsToDelete = currentState.connections.filter((thisConn) => serviceIdsToDelete.includes(thisConn.box2ServiceId)).map((thisConn) => thisConn.id);
+            const tunnelIdsToDelete = currentState.tunnels
+                .filter((thisTunn) => {
+                    return serviceIdsToDelete.includes(thisTunn.hopServiceId) || serviceIdsToDelete.includes(thisTunn.targetServiceId);
+                })
+                .map((thisTunn) => thisTunn.id);
+
+            const boxes = currentState.boxes.filter((thisBox) => thisBox.id !== id);
+            const services = currentState.services.filter((thisService) => !serviceIdsToDelete.includes(thisService.id));
+            const connections = currentState.connections.filter((thisConn) => !connectionIdsToDelete.includes(thisConn.id));
+            const tunnels = currentState.tunnels.filter((thisTunn) => !tunnelIdsToDelete.includes(thisTunn.id));
+            return { ...currentState, boxes, services, connections, tunnels };
         }
 
         case 'edit-box': {
-            const { editedBox } = action;
-            const boxes = currentState.boxes.map((currentBox) => {
-                if (currentBox.id !== editedBox.id) return currentBox;
-                return editedBox;
-            });
-
+            const { boxToEdit } = action;
+            const boxes = currentState.boxes.map((thisBox) => (thisBox.id !== boxToEdit.id ? thisBox : boxToEdit));
             return { ...currentState, boxes };
         }
 
-        case 'edit-service': {
-            return { ...currentState, servicePopup: action.editedPopup };
+        case 'start-add-service': {
+            return {
+                ...currentState,
+                metaData: {
+                    ...currentState.metaData,
+                    serviceSetupIsActive: true,
+                    newService: {
+                        ...defaultEmptyApp.metaData.newService,
+                        boxId: action.boxToAddService.id,
+                    },
+                },
+            };
         }
 
         case 'cancel-add-service': {
-            return { ...currentState, servicePopup: { isActive: false, boxId: -1 } };
+            return {
+                ...currentState,
+                metaData: {
+                    ...currentState.metaData,
+                    serviceSetupIsActive: false,
+                    newService: defaultEmptyApp.metaData.newService,
+                },
+            };
         }
 
         case 'add-service': {
-            return { ...currentState, servicePopup: { isActive: true, boxId: action.boxId } };
-        }
-
-        case 'submit-service': {
-            const { boxId } = currentState.servicePopup;
-            const boxes = currentState.boxes.map((currentbox) => {
-                if (currentbox.id !== boxId) return currentbox;
-                return { ...currentbox, services: [...currentbox.services, action.service] };
-            });
-
-            return { ...currentState, boxes, servicePopup: { isActive: false, boxId: -1 } };
-        }
-
-        case 'connect-start-action': {
-            return { ...currentState, connectionSetup: { isActive: true, box1Id: action.box1Id, localPort: action.localPort } };
-        }
-
-        case 'connect-cancel-action': {
-            return { ...currentState, connectionSetup: { isActive: false, box1Id: -1, localPort: -1 } };
-        }
-
-        case 'connect-final-action': {
-            if (!currentState.connectionSetup.isActive) return currentState;
-            const newConnection: AppState['boxes'][0]['connections'][0] = {
-                box2Id: action.box2Id,
-                localPort: currentState.connectionSetup.localPort,
-                port: action.servicePort,
+            return {
+                ...currentState,
+                services: [...currentState.services, action.serviceToAdd],
+                metaData: {
+                    ...currentState.metaData,
+                    serviceSetupIsActive: false,
+                    newService: defaultEmptyApp.metaData.newService,
+                },
             };
-            const boxes = currentState.boxes.map((currentBox) => {
-                if (currentBox.id !== currentState.connectionSetup.box1Id) return currentBox;
-                return { ...currentBox, connections: [...currentBox.connections, newConnection] };
-            });
-
-            return { ...currentState, boxes, connectionSetup: { isActive: false, box1Id: -1, localPort: -1 } };
         }
 
-        case 'connect-remove-action': {
-            const boxes = currentState.boxes.map((currentBox) => {
-                if (currentBox.id !== action.boxId) return currentBox;
-                return {
-                    ...currentBox,
-                    connections: currentBox.connections.filter((connection) => {
-                        return connection.box2Id !== action.connection.box2Id || connection.port !== action.connection.port || connection.localPort !== action.connection.localPort;
-                    }),
-                };
-            });
+        case 'delete-service': {
+            const { serviceToDelete } = action;
+            const services = currentState.services.filter((thisService) => thisService !== serviceToDelete);
+            const connections = currentState.connections.filter((thisConn) => thisConn.box2ServiceId !== serviceToDelete.id);
+            const tunnels = currentState.tunnels.filter((thisTunn) => thisTunn.hopServiceId !== serviceToDelete.id && thisTunn.targetServiceId !== serviceToDelete.id);
+            return { ...currentState, services, connections, tunnels };
+        }
 
-            return { ...currentState, boxes };
+        case 'start-add-connection': {
+            return {
+                ...currentState,
+                metaData: {
+                    ...currentState.metaData,
+                    connectionSetupIsActive: true,
+                    newConnection: {
+                        ...defaultEmptyApp.metaData.newConnection,
+                        box1Id: action.box1.id,
+                        box1Port: 1337, // TODO: change this to handle ephemeral ports
+                    },
+                },
+            };
+        }
+
+        case 'cancel-add-connection': {
+            return {
+                ...currentState,
+                metaData: {
+                    ...currentState.metaData,
+                    connectionSetupIsActive: false,
+                    newConnection: defaultEmptyApp.metaData.newConnection,
+                },
+            };
+        }
+
+        case 'add-connection': {
+            const newConnection: AppState['connections'][0] = {
+                ...currentState.metaData.newConnection,
+                box2ServiceId: action.serviceToConnect.id,
+            };
+            return {
+                ...currentState,
+                connections: [...currentState.connections, newConnection],
+                metaData: {
+                    ...currentState.metaData,
+                    connectionSetupIsActive: false,
+                    newConnection: defaultEmptyApp.metaData.newConnection,
+                },
+            };
+        }
+
+        case 'delete-connection': {
+            const connections = currentState.connections.filter((thisConn) => thisConn !== action.connectionToRemove);
+            return { ...currentState, connections };
         }
 
         case 'start-tunnel': {
-            return { ...currentState, tunnelSetup: { ...currentState.tunnelSetup, isActive: true, stage: 0 } };
+            return {
+                ...currentState,
+                metaData: {
+                    ...currentState.metaData,
+                    tunnelSetupIsActive: true,
+                    newTunnel: defaultEmptyApp.metaData.newTunnel,
+                },
+            };
         }
 
         case 'cancel-tunnel': {
-            return { ...currentState, tunnelSetup: { ...currentState.tunnelSetup, isActive: false, stage: 0 } };
+            return {
+                ...currentState,
+                metaData: {
+                    ...currentState.metaData,
+                    tunnelSetupIsActive: false,
+                    newTunnel: defaultEmptyApp.metaData.newTunnel,
+                },
+            };
+        }
+
+        case 'tunnel-stage-0': {
+            return {
+                ...currentState,
+                metaData: {
+                    ...currentState.metaData,
+                    newTunnel: {
+                        ...defaultEmptyApp.metaData.newTunnel,
+                        clientId: action.clientBox.id,
+                        clientPort: 2222, // TODO: default listening port for tunnels?
+                    },
+                },
+            };
         }
 
         case 'tunnel-stage-1': {
-            return { ...currentState, tunnelSetup: { ...currentState.tunnelSetup, stage: 1, tunnel: { ...currentState.tunnelSetup.tunnel, clientId: action.box.id } } };
+            return {
+                ...currentState,
+                metaData: {
+                    ...currentState.metaData,
+                    newTunnel: {
+                        ...currentState.metaData.newTunnel,
+                        hopServiceId: action.hopService.id,
+                    },
+                },
+            };
         }
 
         case 'tunnel-stage-2': {
+            const newTunnel: AppState['tunnels'][0] = {
+                ...currentState.metaData.newTunnel,
+                targetServiceId: action.targetService.id,
+            };
             return {
                 ...currentState,
-                tunnelSetup: { ...currentState.tunnelSetup, stage: 2, tunnel: { ...currentState.tunnelSetup.tunnel, hopId: action.box.id, hopService: action.service } },
+                tunnels: [...currentState.tunnels, newTunnel],
+                metaData: {
+                    ...currentState.metaData,
+                    tunnelSetupIsActive: false,
+                    newTunnel: defaultEmptyApp.metaData.newTunnel,
+                },
             };
         }
 
-        case 'tunnel-stage-3': {
-            return {
-                ...currentState,
-                tunnelSetup: { ...currentState.tunnelSetup, isActive: false },
-                tunnels: [...currentState.tunnels, { ...currentState.tunnelSetup.tunnel, targetId: action.box.id, targetPort: action.service }],
-            };
+        case 'edit-client-port-tunnel': {
+            const { clientId } = action.tunnelToEdit;
+            const tunnels = currentState.tunnels.map((thisTunn) => {
+                if (thisTunn.clientId !== clientId) return thisTunn;
+                return action.tunnelToEdit;
+            });
+            return { ...currentState, tunnels };
+        }
+
+        case 'delete-tunnel': {
+            const tunnels = currentState.tunnels.filter((thisTunn) => action.tunnel !== thisTunn);
+            return { ...currentState, tunnels };
         }
 
         default: {

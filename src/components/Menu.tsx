@@ -24,22 +24,22 @@ export const Menu = (Props: MenuProps) => {
 
     const saveToLocal = (event: MouseEvent) => {
         event.stopPropagation();
-        dispatch({ type: 'save-local' });
+        dispatch({ type: 'save-localstorage' });
     };
 
     const clearLocal = (event: MouseEvent) => {
         event.stopPropagation();
-        dispatch({ type: 'clear-local' });
+        dispatch({ type: 'delete-localstorage' });
     };
 
     const clearBoxes = (event: MouseEvent) => {
         event.stopPropagation();
-        dispatch({ type: 'clear-app' });
+        dispatch({ type: 'delete-all-objects' });
     };
 
     const cancelConnection = (event: MouseEvent) => {
         event.stopPropagation();
-        dispatch({ type: 'connect-cancel-action' });
+        dispatch({ type: 'cancel-add-connection' });
     };
 
     const addBox = (event: MouseEvent) => {
@@ -49,10 +49,8 @@ export const Menu = (Props: MenuProps) => {
             name: 'CHANGEME',
             internalAddress: '0.0.0.0',
             externalAddress: '0.0.0.0',
-            services: [],
-            connections: [],
         };
-        dispatch({ type: 'add-box', box: defaultBox });
+        dispatch({ type: 'add-box', boxToAdd: defaultBox });
     };
 
     const addTunnel = (event: MouseEvent) => {
@@ -65,8 +63,8 @@ export const Menu = (Props: MenuProps) => {
         dispatch({ type: 'cancel-tunnel' });
     };
 
-    const backgroundColor = state.connectionSetup.isActive || state.tunnelSetup.isActive ? 'yellow' : 'cyan';
-    const visibility = state.connectionSetup.isActive ? 'visible' : 'hidden';
+    const backgroundColor = state.metaData.connectionSetupIsActive || state.metaData.tunnelSetupIsActive ? 'yellow' : 'cyan';
+    const visibility = state.metaData.connectionSetupIsActive ? 'visible' : 'hidden';
 
     return (
         <div style={{ ...MenuStyle, backgroundColor }}>
@@ -79,7 +77,7 @@ export const Menu = (Props: MenuProps) => {
             <button style={MenuButtonStyle} onClick={addTunnel}>
                 Add tunnel
             </button>
-            <button style={MenuButtonStyle} onClick={cancelTunnel}>
+            <button style={{ ...MenuButtonStyle, visibility: state.metaData.tunnelSetupIsActive ? 'visible' : 'hidden' }} onClick={cancelTunnel}>
                 cancel tunnel
             </button>
             <button style={{ ...MenuButtonStyle, visibility }} onClick={cancelConnection}>

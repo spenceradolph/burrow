@@ -1,6 +1,6 @@
 import { Properties } from 'csstype';
 import { useReducer } from 'react';
-import { Box, Menu, Popup } from '../components';
+import { Box, Connection, Menu, ServicePopup, Tunnel } from '../components';
 import { initialState, reducer } from '../state';
 
 const AppStyle: Properties = {
@@ -12,13 +12,17 @@ const AppStyle: Properties = {
 export const App = () => {
     const [state, dispatch] = useReducer(reducer, initialState);
 
+    const boxComponents = state.boxes.map((BoxData, index) => <Box key={index} BoxData={BoxData} dispatch={dispatch} state={state} />); // TODO: consider not passing entire state
+    const connectionComponents = state.connections.map((thisConn, index) => <Connection key={index} connection={thisConn} />);
+    const tunnelComponents = state.tunnels.map((tunnel, index) => <Tunnel key={index} tunnel={tunnel} />);
+
     return (
         <div style={AppStyle}>
             <Menu state={state} dispatch={dispatch} />
-            <Popup servicePopup={state.servicePopup} dispatch={dispatch} />
-            {state.boxes.map((BoxData, index) => (
-                <Box key={index} BoxData={BoxData} dispatch={dispatch} state={state} />
-            ))}
+            <ServicePopup state={state} dispatch={dispatch} />
+            {boxComponents}
+            {connectionComponents}
+            {tunnelComponents}
         </div>
     );
 };
