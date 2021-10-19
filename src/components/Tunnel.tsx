@@ -57,11 +57,11 @@ export const TunnelHopPoint = (Props: TunnelHopPointProps) => {
     const generateTunnelCommand = (event: MouseEvent) => {
         event.stopPropagation();
         const targetIP = state.boxes
-            .filter((thisBox) => thisBox.id === state.services.filter((thisService) => thisService.id === tunnel.targetServiceId).pop()?.id)
+            .filter((thisBox) => thisBox.id === state.services.filter((thisService) => thisService.id === tunnel.targetServiceId).pop()?.boxId)
             .pop()?.externalAddress;
         const targetPort = state.services.filter((thisService) => thisService.id === tunnel.targetServiceId).pop()?.port;
         const hopBoxIP = state.boxes
-            .filter((thisBox) => thisBox.id === state.services.filter((thisService) => thisService.id === tunnel.hopServiceId).pop()?.id)
+            .filter((thisBox) => thisBox.id === state.services.filter((thisService) => thisService.id === tunnel.hopServiceId).pop()?.boxId)
             .pop()?.externalAddress;
         alert(`ssh user@${hopBoxIP} -L ${tunnel.clientPort}:${targetIP}:${targetPort}`);
     };
