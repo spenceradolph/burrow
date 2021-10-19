@@ -26,10 +26,11 @@ const centerStyle: Properties = {
 type BoxProps = {
     BoxData: AppState['boxes'][0];
     dispatch: Dispatch;
+    state: AppState;
 };
 
 export const Box = (Props: BoxProps) => {
-    const { BoxData, dispatch } = Props;
+    const { BoxData, dispatch, state } = Props;
     const { id, name, internalAddress, externalAddress, services, connections } = BoxData;
 
     const deleteSelf = (event: MouseEvent) => {
@@ -59,24 +60,53 @@ export const Box = (Props: BoxProps) => {
 
     const addConnection = (event: MouseEvent) => {
         event.stopPropagation();
-        dispatch({ type: 'connect-start-action', box1Id: id, localPort: connections.length + 10 }); // TODO: handle local port options?
+        dispatch({ type: 'connect-start-action', box1Id: id, localPort: -1 }); // TODO: handle local port options?
     };
 
-    const submitConnection = (event: MouseEvent) => {
+    const clickService = (event: MouseEvent) => {
         event.stopPropagation();
         const servicePort = parseInt(event.currentTarget.getAttribute('data-port')!);
+
+        if (state.tunnelSetup.isActive) {
+            if (state.tunnelSetup.stage === 1) {
+                dispatch({ type: 'tunnel-stage-2', box: BoxData, service: servicePort });
+            }
+            if (state.tunnelSetup.stage === 2) {
+                dispatch({ type: 'tunnel-stage-3', box: BoxData, service: servicePort });
+            }
+        }
+
         dispatch({ type: 'connect-final-action', box2Id: id, servicePort });
     };
 
     const removeConnection = (event: MouseEvent) => {
         event.stopPropagation();
-        const connection = JSON.parse(event.currentTarget.getAttribute('data-connection')!);
-        dispatch({ type: 'connect-remove-action', boxId: id, connection });
+        if (!state.tunnelSetup.isActive) {
+            const connection = JSON.parse(event.currentTarget.getAttribute('data-connection')!);
+            dispatch({ type: 'connect-remove-action', boxId: id, connection });
+        }
     };
+
+    const boxClick = (event: MouseEvent) => {
+        event.stopPropagation();
+        if (state.tunnelSetup.isActive) {
+            if (state.tunnelSetup.stage === 0) {
+                dispatch({ type: 'tunnel-stage-1', box: BoxData });
+            }
+        }
+    };
+
+    const tunnelHopPoints = state.tunnels
+        .filter((tunnel) => {
+            return tunnel.hopId === id;
+        })
+        .map((tunnel) => {
+            return <p>Hop Here!</p>;
+        });
 
     return (
         <Draggable onDrag={useXarrow()} onStop={useXarrow()}>
-            <div style={{ ...BoxStyle }}>
+            <div style={{ ...BoxStyle }} onClick={boxClick}>
                 Name:
                 <input type={'text'} value={name} onChange={changeName} style={{ ...centerStyle, marginLeft: '30px' }} />
                 InternalIP: <input type={'text'} value={internalAddress} onChange={changeInternal} style={centerStyle} />
@@ -93,7 +123,7 @@ export const Box = (Props: BoxProps) => {
                 </button>
                 {services.map((service) => {
                     return (
-                        <div id={`box${id}serviceport${service.port}`} data-port={service.port} onClick={submitConnection}>
+                        <div id={`box${id}serviceport${service.port}`} data-port={service.port} onClick={clickService}>
                             {service.name}:{service.port}
                         </div>
                     );
@@ -102,13 +132,14 @@ export const Box = (Props: BoxProps) => {
                     const style: Properties = { position: 'relative', float: 'right' };
                     return (
                         <div id={`box${id}connectionport${connection.localPort}`} data-connection={JSON.stringify(connection)} onClick={removeConnection} style={style}>
-                            {connection.localPort}
+                            {connection.localPort === -1 ? 'x' : connection.localPort}
                         </div>
                     );
                 })}
                 {connections.map((connection) => (
                     <Xarrow start={`box${id}connectionport${connection.localPort}`} end={`box${connection.box2Id}serviceport${connection.port}`} />
                 ))}
+                {tunnelHopPoints}
             </div>
         </Draggable>
     );

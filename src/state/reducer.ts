@@ -109,6 +109,33 @@ export const reducer = (currentState: AppState, action: AppAction): AppState => 
             return { ...currentState, boxes };
         }
 
+        case 'start-tunnel': {
+            return { ...currentState, tunnelSetup: { ...currentState.tunnelSetup, isActive: true, stage: 0 } };
+        }
+
+        case 'cancel-tunnel': {
+            return { ...currentState, tunnelSetup: { ...currentState.tunnelSetup, isActive: false, stage: 0 } };
+        }
+
+        case 'tunnel-stage-1': {
+            return { ...currentState, tunnelSetup: { ...currentState.tunnelSetup, stage: 1, tunnel: { ...currentState.tunnelSetup.tunnel, clientId: action.box.id } } };
+        }
+
+        case 'tunnel-stage-2': {
+            return {
+                ...currentState,
+                tunnelSetup: { ...currentState.tunnelSetup, stage: 2, tunnel: { ...currentState.tunnelSetup.tunnel, hopId: action.box.id, hopService: action.service } },
+            };
+        }
+
+        case 'tunnel-stage-3': {
+            return {
+                ...currentState,
+                tunnelSetup: { ...currentState.tunnelSetup, isActive: false },
+                tunnels: [...currentState.tunnels, { ...currentState.tunnelSetup.tunnel, targetId: action.box.id, targetPort: action.service }],
+            };
+        }
+
         default: {
             const exhaustiveCheck: never = action;
             throw new Error(`Unhandled Action Case: ${exhaustiveCheck}`);

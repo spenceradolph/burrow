@@ -11,6 +11,15 @@ type ConnectionType = {
     localPort: number;
 };
 
+type TunnelType = {
+    clientId: BoxType['id'];
+    clientPort: ServiceType['port'];
+    hopId: BoxType['id'];
+    hopService: ServiceType['port'];
+    targetId: BoxType['id'];
+    targetPort: ServiceType['port'];
+};
+
 type BoxType = {
     id: number;
     name: string;
@@ -38,6 +47,12 @@ export type AppState = {
     boxes: BoxType[];
     servicePopup: ServicePopup;
     connectionSetup: ConnectionSetup;
+    tunnelSetup: {
+        isActive: boolean;
+        stage: number;
+        tunnel: TunnelType;
+    };
+    tunnels: TunnelType[];
 };
 
 // Configure initial state from local storage (if possible)

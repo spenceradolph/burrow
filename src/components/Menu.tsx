@@ -55,7 +55,17 @@ export const Menu = (Props: MenuProps) => {
         dispatch({ type: 'add-box', box: defaultBox });
     };
 
-    const backgroundColor = state.connectionSetup.isActive ? 'yellow' : 'cyan';
+    const addTunnel = (event: MouseEvent) => {
+        event.stopPropagation();
+        dispatch({ type: 'start-tunnel' });
+    };
+
+    const cancelTunnel = (event: MouseEvent) => {
+        event.stopPropagation();
+        dispatch({ type: 'cancel-tunnel' });
+    };
+
+    const backgroundColor = state.connectionSetup.isActive || state.tunnelSetup.isActive ? 'yellow' : 'cyan';
     const visibility = state.connectionSetup.isActive ? 'visible' : 'hidden';
 
     return (
@@ -65,6 +75,12 @@ export const Menu = (Props: MenuProps) => {
             </button>
             <button style={MenuButtonStyle} onClick={addBox}>
                 Add box
+            </button>
+            <button style={MenuButtonStyle} onClick={addTunnel}>
+                Add tunnel
+            </button>
+            <button style={MenuButtonStyle} onClick={cancelTunnel}>
+                cancel tunnel
             </button>
             <button style={{ ...MenuButtonStyle, visibility }} onClick={cancelConnection}>
                 Cancel Connection

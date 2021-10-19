@@ -73,6 +73,36 @@ type RemoveConnectionAction = BaseAction & {
     connection: AppState['boxes'][0]['connections'][0];
 };
 
+type DeleteServiceAction = BaseAction & {
+    type: 'delete-service-action';
+    boxId: AppState['boxes'][0]['id'];
+    service: AppState['boxes'][0]['services'][0];
+};
+
+type StartTunnelSelectionAction = BaseAction & {
+    type: 'start-tunnel';
+};
+type CancelTunnelSelectionAction = BaseAction & {
+    type: 'cancel-tunnel';
+};
+
+type Stage1TunnelAction = BaseAction & {
+    type: 'tunnel-stage-1';
+    box: AppState['boxes'][0];
+};
+
+type Stage2TunnelAction = BaseAction & {
+    type: 'tunnel-stage-2';
+    box: AppState['boxes'][0];
+    service: AppState['boxes'][0]['services'][0]['port'];
+};
+
+type Stage3TunnelAction = BaseAction & {
+    type: 'tunnel-stage-3';
+    box: AppState['boxes'][0];
+    service: AppState['boxes'][0]['services'][0]['port'];
+};
+
 export type AppAction =
     | ClearSpaceAction
     | DeleteAction
@@ -87,5 +117,10 @@ export type AppAction =
     | ConnectStartAction
     | ConnectCancelAction
     | ConnectFinalAction
-    | RemoveConnectionAction;
+    | RemoveConnectionAction
+    | StartTunnelSelectionAction
+    | CancelTunnelSelectionAction
+    | Stage1TunnelAction
+    | Stage2TunnelAction
+    | Stage3TunnelAction;
 export type Dispatch = React.Dispatch<AppAction>;

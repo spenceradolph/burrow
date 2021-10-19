@@ -17,7 +17,7 @@ export const App = () => {
             <Menu state={state} dispatch={dispatch} />
             <Popup servicePopup={state.servicePopup} dispatch={dispatch} />
             {state.boxes.map((BoxData, index) => (
-                <Box key={index} BoxData={BoxData} dispatch={dispatch} />
+                <Box key={index} BoxData={BoxData} dispatch={dispatch} state={state} />
             ))}
         </div>
     );

@@ -9,9 +9,23 @@ const exampleBoxList: AppState['boxes'] = [
         internalAddress: '1.0.0.1',
         externalAddress: '2.0.0.1',
         services: [],
-        connections: [],
+        connections: [
+            {
+                box2Id: 2,
+                localPort: -1,
+                port: 22,
+            },
+        ],
     },
     { id: 2, name: 'Box2', internalAddress: '1.0.0.2', externalAddress: '2.0.0.2', services: [{ name: 'SSH', port: 22 }], connections: [] },
+    {
+        id: 3,
+        name: 'Box3',
+        internalAddress: '1.0.0.2',
+        externalAddress: '2.0.0.2',
+        services: [{ name: 'HTTP', port: 80 }],
+        connections: [],
+    },
 ];
 
 export const exampleInitialState: AppState = {
@@ -25,4 +39,17 @@ export const exampleInitialState: AppState = {
         box1Id: -1,
         localPort: 4444,
     },
+    tunnelSetup: {
+        isActive: false,
+        stage: 0,
+        tunnel: {
+            clientId: -1,
+            clientPort: -1,
+            hopId: -1,
+            hopService: -1,
+            targetId: -1,
+            targetPort: -1,
+        },
+    },
+    tunnels: [],
 };
