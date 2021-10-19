@@ -5,6 +5,7 @@ type BoxType = {
     name: string;
     internalAddress: string;
     externalAddress: string;
+    notes: string;
 };
 
 type ServiceType = {

@@ -1,5 +1,5 @@
+import { BaseAction } from '../actions';
 import { AppState } from '../state';
-import { BaseAction } from './';
 
 /**
  * Clicked 'Add Service' button on a box, start the popup.

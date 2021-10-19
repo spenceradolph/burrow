@@ -1,4 +1,4 @@
-import { BaseAction } from './';
+import { BaseAction } from '../actions';
 
 /**
  * Delete All Objects within the AppState

@@ -1,5 +1,5 @@
 import { AppState } from '../state';
-import { BaseAction } from './index';
+import { BaseAction } from '../actions';
 
 /**
  * Create a default box in the workspace

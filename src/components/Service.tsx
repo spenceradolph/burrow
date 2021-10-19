@@ -38,7 +38,6 @@ export const Service = (Props: ServiceProps) => {
         }
     };
 
-    // TODO: change how the id's are configured and try to only use JSON.stringify for the entire id if possible (connection component doesn't know the name of service tho...)
     return (
         <div id={`service-${service.id}`} data-service={JSON.stringify(service)} onClick={clickService}>
             {name}:{port}

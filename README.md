@@ -2,6 +2,8 @@
 
 Burrow is a web-based tool for keeping notes on tunnels and pivots between hosts.
 
+![Dev-Screenshot](https://github.com/spenceradolph/burrow/blob/main/TunnelDevScreenshot.PNG)
+
 ## Getting Started
 
 ### Prerequisites
@@ -22,6 +24,15 @@ npm install
 
 ```
 npm start
+```
+
+### Running
+
+Compile the project using the following command and the web-files will be generated in a ./build directory, meant to act as the root of a web-server.
+(ex: 'python -m http.server 80' -> and navigating to 'localhost' in a browser)
+
+```
+npm run build
 ```
 
 ## Built With

@@ -1,4 +1,3 @@
-import { Properties } from 'csstype';
 import Xarrow from 'react-xarrows';
 import { AppState, Dispatch } from '../state';
 
@@ -7,9 +6,7 @@ type ConnectionProps = {
 };
 export const Connection = (Props: ConnectionProps) => {
     const { connection } = Props;
-    const { box2ServiceId } = connection;
-
-    return <Xarrow start={`connection-${JSON.stringify(connection)}`} end={`service-${box2ServiceId}`} />;
+    return <Xarrow start={`connection-${JSON.stringify(connection)}`} end={`service-${connection.box2ServiceId}`} />;
 };
 
 type ConnectionStartPointProps = {
@@ -22,14 +19,16 @@ export const ConnectionStartPoint = (Props: ConnectionStartPointProps) => {
 
     const removeConnection = (event: any) => {
         event.stopPropagation();
-        if (!state.metaData.tunnelSetupIsActive) {
-            dispatch({ type: 'delete-connection', connectionToRemove: connection });
-        }
+        if (!state.metaData.tunnelSetupIsActive) dispatch({ type: 'delete-connection', connectionToRemove: connection });
     };
 
-    const style: Properties = { position: 'relative', float: 'right' };
     return (
-        <div id={`connection-${JSON.stringify(connection)}`} data-connection={JSON.stringify(connection)} onClick={removeConnection} style={style}>
+        <div
+            id={`connection-${JSON.stringify(connection)}`}
+            data-connection={JSON.stringify(connection)}
+            onClick={removeConnection}
+            style={{ position: 'relative', float: 'right' }}
+        >
             {connection.box1Port === -1 ? 'x' : connection.box1Port}
         </div>
     );
