@@ -8,25 +8,25 @@ type BoxType = {
 };
 
 type ServiceType = {
+    id: number;
     boxId: BoxType['id'];
     port: number;
     name: string;
 };
 
 type ConnectionType = {
+    id: number;
     box1Id: BoxType['id'];
     box1Port: ServiceType['port'];
-    box2Id: BoxType['id'];
-    box2Port: ServiceType['port'];
+    box2ServiceId: ServiceType['id'];
 };
 
 type TunnelType = {
+    id: number;
     clientId: BoxType['id'];
     clientPort: ServiceType['port']; // locally exposed listening port that gets forwarded to target
-    hopId: BoxType['id'];
-    hopPort: ServiceType['port']; // usually SSH
-    targetId: BoxType['id'];
-    targetPort: ServiceType['port'];
+    hopServiceId: ServiceType['id'];
+    targetServiceId: ServiceType['id'];
 };
 
 /**

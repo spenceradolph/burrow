@@ -1,4 +1,4 @@
-import { MouseEvent } from 'react';
+import { ChangeEvent, MouseEvent } from 'react';
 import Xarrow from 'react-xarrows';
 import { AppState, Dispatch } from '../state';
 
@@ -16,19 +16,26 @@ export const Tunnel = (Props: TunnelProps) => {
                 start={`tunnelClient-${JSON.stringify(tunnel)}`}
                 end={`tunnelHop-${JSON.stringify(tunnel)}}`}
             />
-            <Xarrow startAnchor={'middle'} start={`tunnelHop-${JSON.stringify(tunnel)}}`} end={`service-${tunnel.targetId}-${tunnel.targetPort}`} />
+            <Xarrow startAnchor={'middle'} start={`tunnelHop-${JSON.stringify(tunnel)}}`} end={`service-${tunnel.targetServiceId}`} />
         </>
     );
 };
 
 type TunnelClientPointProps = {
     tunnel: AppState['tunnels'][0];
+    dispatch: Dispatch;
 };
 export const TunnelClientPoint = (Props: TunnelClientPointProps) => {
-    const { tunnel } = Props;
+    const { tunnel, dispatch } = Props;
+
+    const changePort = (event: ChangeEvent<HTMLInputElement>) => {
+        event.stopPropagation();
+        dispatch({ type: 'edit-client-port-tunnel', tunnelToEdit: { ...tunnel, clientPort: parseInt(event.currentTarget.value) } });
+    };
+
     return (
         <div id={`tunnelClient-${JSON.stringify(tunnel)}`} style={{ position: 'relative', float: 'right' }}>
-            <input type="number" value="2222" style={{ width: '50px' }} />
+            <input type="number" value="2222" style={{ width: '50px' }} onChange={changePort} />
         </div>
     );
 };
@@ -50,7 +57,7 @@ export const TunnelHopPoint = (Props: TunnelHopPointProps) => {
     return (
         <>
             <p onClick={deleteTunnel} style={{ textAlign: 'center' }}>
-                Service: {tunnel.hopPort}
+                Service: {tunnel.hopServiceId}
             </p>
             <div id={`tunnelHop-${JSON.stringify(tunnel)}}`} style={{ textAlign: 'center' }} />
         </>

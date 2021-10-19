@@ -40,6 +40,14 @@ type Stage2TunnelAction = BaseAction & {
 };
 
 /**
+ * Edit the listening/exposed port on the client side of the tunnel.
+ */
+type EditTunnelPortAction = BaseAction & {
+    type: 'edit-client-port-tunnel';
+    tunnelToEdit: AppState['tunnels'][0];
+};
+
+/**
  * Delete a tunnel by clicking the hop point.
  */
 type DeleteTunnelAction = BaseAction & {
@@ -47,4 +55,11 @@ type DeleteTunnelAction = BaseAction & {
     tunnel: AppState['tunnels'][0];
 };
 
-export type AllTunnelActions = StartTunnelSelectionAction | CancelTunnelSelectionAction | Stage0TunnelAction | Stage1TunnelAction | Stage2TunnelAction | DeleteTunnelAction;
+export type AllTunnelActions =
+    | StartTunnelSelectionAction
+    | CancelTunnelSelectionAction
+    | Stage0TunnelAction
+    | Stage1TunnelAction
+    | Stage2TunnelAction
+    | DeleteTunnelAction
+    | EditTunnelPortAction;

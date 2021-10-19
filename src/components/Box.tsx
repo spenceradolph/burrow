@@ -77,11 +77,12 @@ export const Box = (Props: BoxProps) => {
     const tunnelClientPoints = state.tunnels
         .filter((tunnel) => tunnel.clientId === id)
         .map((tunnel, index) => {
-            return <TunnelClientPoint key={index} tunnel={tunnel} />;
+            return <TunnelClientPoint key={index} tunnel={tunnel} dispatch={dispatch} />;
         });
 
+    const serviceIdsForThisBox = state.services.filter((thisService) => thisService.boxId === id).map((thisService) => thisService.id);
     const tunnelHopPoints = state.tunnels
-        .filter((tunnel) => tunnel.hopId === id)
+        .filter((tunnel) => serviceIdsForThisBox.includes(tunnel.hopServiceId))
         .map((tunnel, index) => {
             return <TunnelHopPoint key={index} tunnel={tunnel} state={state} dispatch={dispatch} />;
         });

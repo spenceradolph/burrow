@@ -7,9 +7,9 @@ type ConnectionProps = {
 };
 export const Connection = (Props: ConnectionProps) => {
     const { connection } = Props;
-    const { box2Id, box2Port } = connection;
+    const { box2ServiceId } = connection;
 
-    return <Xarrow start={`connection-${JSON.stringify(connection)}`} end={`service-${box2Id}-${box2Port}`} />;
+    return <Xarrow start={`connection-${JSON.stringify(connection)}`} end={`service-${box2ServiceId}`} />;
 };
 
 type ConnectionStartPointProps = {

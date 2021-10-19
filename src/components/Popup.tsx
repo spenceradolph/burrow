@@ -26,7 +26,8 @@ export const Popup = (Props: PopupProps) => {
 
     const addService = (event: MouseEvent) => {
         event.stopPropagation();
-        dispatch({ type: 'add-service', serviceToAdd: { ...newService, name, port } });
+        const serviceId: AppState['services'][0]['id'] = state.services.length ? state.services.slice(-1)[0].id + 1 : 1;
+        dispatch({ type: 'add-service', serviceToAdd: { ...newService, name, port, id: serviceId } });
     };
 
     const closePopup = (event: MouseEvent) => {

@@ -27,27 +27,24 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
 
         case 'delete-box': {
             const { id } = action.boxToDelete;
-            const boxes = currentState.boxes.filter((thisBox) => {
-                return thisBox.id !== id;
-            });
-            const services = currentState.services.filter((thisService) => {
-                return thisService.boxId !== id;
-            });
-            const connections = currentState.connections.filter((thisConn) => {
-                return thisConn.box1Id !== id || thisConn.box2Id !== id;
-            });
-            const tunnels = currentState.tunnels.filter((thisTunn) => {
-                return thisTunn.clientId !== id || thisTunn.hopId !== id || thisTunn.targetId !== id;
-            });
+            const serviceIdsToDelete = currentState.services.filter((thisService) => thisService.boxId === id).map((thisService) => thisService.id);
+            const connectionIdsToDelete = currentState.connections.filter((thisConn) => serviceIdsToDelete.includes(thisConn.box2ServiceId)).map((thisConn) => thisConn.id);
+            const tunnelIdsToDelete = currentState.tunnels
+                .filter((thisTunn) => {
+                    return serviceIdsToDelete.includes(thisTunn.hopServiceId) || serviceIdsToDelete.includes(thisTunn.targetServiceId);
+                })
+                .map((thisTunn) => thisTunn.id);
+
+            const boxes = currentState.boxes.filter((thisBox) => thisBox.id !== id);
+            const services = currentState.services.filter((thisService) => !serviceIdsToDelete.includes(thisService.id));
+            const connections = currentState.connections.filter((thisConn) => !connectionIdsToDelete.includes(thisConn.id));
+            const tunnels = currentState.tunnels.filter((thisTunn) => !tunnelIdsToDelete.includes(thisTunn.id));
             return { ...currentState, boxes, services, connections, tunnels };
         }
 
         case 'edit-box': {
             const { boxToEdit } = action;
-            const boxes = currentState.boxes.map((thisbox) => {
-                if (thisbox.id !== boxToEdit.id) return thisbox;
-                return boxToEdit;
-            });
+            const boxes = currentState.boxes.map((thisBox) => (thisBox.id !== boxToEdit.id ? thisBox : boxToEdit));
             return { ...currentState, boxes };
         }
 
@@ -90,18 +87,9 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
 
         case 'delete-service': {
             const { serviceToDelete } = action;
-            const services = currentState.services.filter((thisService) => {
-                return thisService.boxId !== serviceToDelete.boxId || thisService.port !== serviceToDelete.port;
-            });
-            const connections = currentState.connections.filter((thisConn) => {
-                return thisConn.box2Id !== serviceToDelete.boxId || thisConn.box2Port !== serviceToDelete.port;
-            });
-            const tunnels = currentState.tunnels.filter((thisTunn) => {
-                return (
-                    (thisTunn.hopId !== serviceToDelete.boxId || thisTunn.hopPort !== serviceToDelete.port) &&
-                    (thisTunn.targetId !== serviceToDelete.boxId || thisTunn.targetPort !== serviceToDelete.port)
-                );
-            });
+            const services = currentState.services.filter((thisService) => thisService !== serviceToDelete);
+            const connections = currentState.connections.filter((thisConn) => thisConn.box2ServiceId !== serviceToDelete.id);
+            const tunnels = currentState.tunnels.filter((thisTunn) => thisTunn.hopServiceId !== serviceToDelete.id && thisTunn.targetServiceId !== serviceToDelete.id);
             return { ...currentState, services, connections, tunnels };
         }
 
@@ -114,7 +102,7 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
                     newConnection: {
                         ...defaultEmptyApp.metaData.newConnection,
                         box1Id: action.box1.id,
-                        box1Port: 9876, // TODO: change this to handle ephemeral ports
+                        box1Port: 1337, // TODO: change this to handle ephemeral ports
                     },
                 },
             };
@@ -134,8 +122,7 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
         case 'add-connection': {
             const newConnection: AppState['connections'][0] = {
                 ...currentState.metaData.newConnection,
-                box2Id: action.serviceToConnect.boxId,
-                box2Port: action.serviceToConnect.port,
+                box2ServiceId: action.serviceToConnect.id,
             };
             return {
                 ...currentState,
@@ -149,15 +136,7 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
         }
 
         case 'delete-connection': {
-            const { connectionToRemove } = action;
-            const connections = currentState.connections.filter((thisConn) => {
-                return (
-                    thisConn.box1Id !== connectionToRemove.box1Id ||
-                    thisConn.box1Port !== connectionToRemove.box1Port ||
-                    thisConn.box2Id !== connectionToRemove.box2Id ||
-                    thisConn.box2Port !== connectionToRemove.box2Port
-                );
-            });
+            const connections = currentState.connections.filter((thisConn) => thisConn !== action.connectionToRemove);
             return { ...currentState, connections };
         }
 
@@ -204,8 +183,7 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
                     ...currentState.metaData,
                     newTunnel: {
                         ...currentState.metaData.newTunnel,
-                        hopId: action.hopService.boxId,
-                        hopPort: action.hopService.port,
+                        hopServiceId: action.hopService.id,
                     },
                 },
             };
@@ -214,8 +192,7 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
         case 'tunnel-stage-2': {
             const newTunnel: AppState['tunnels'][0] = {
                 ...currentState.metaData.newTunnel,
-                targetId: action.targetService.boxId,
-                targetPort: action.targetService.port,
+                targetServiceId: action.targetService.id,
             };
             return {
                 ...currentState,
@@ -228,10 +205,18 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
             };
         }
 
-        case 'delete-tunnel': {
-            const tunnels = currentState.tunnels.filter((thisTunn) => {
-                return action.tunnel !== thisTunn;
+        case 'edit-client-port-tunnel': {
+            const { clientId, clientPort, hopServiceId, targetServiceId } = action.tunnelToEdit;
+            const tunnels = currentState.tunnels.map((thisTunn) => {
+                if (thisTunn.clientId !== clientId || thisTunn.clientPort !== clientPort || thisTunn.hopServiceId !== hopServiceId || thisTunn.targetServiceId !== targetServiceId)
+                    return thisTunn;
+                return action.tunnelToEdit;
             });
+            return { ...currentState, tunnels };
+        }
+
+        case 'delete-tunnel': {
+            const tunnels = currentState.tunnels.filter((thisTunn) => action.tunnel !== thisTunn);
             return { ...currentState, tunnels };
         }
 
