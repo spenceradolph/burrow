@@ -206,10 +206,9 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
         }
 
         case 'edit-client-port-tunnel': {
-            const { clientId, clientPort, hopServiceId, targetServiceId } = action.tunnelToEdit;
+            const { clientId } = action.tunnelToEdit;
             const tunnels = currentState.tunnels.map((thisTunn) => {
-                if (thisTunn.clientId !== clientId || thisTunn.clientPort !== clientPort || thisTunn.hopServiceId !== hopServiceId || thisTunn.targetServiceId !== targetServiceId)
-                    return thisTunn;
+                if (thisTunn.clientId !== clientId) return thisTunn;
                 return action.tunnelToEdit;
             });
             return { ...currentState, tunnels };

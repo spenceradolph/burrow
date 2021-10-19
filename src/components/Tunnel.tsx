@@ -35,7 +35,7 @@ export const TunnelClientPoint = (Props: TunnelClientPointProps) => {
 
     return (
         <div id={`tunnelClient-${JSON.stringify(tunnel)}`} style={{ position: 'relative', float: 'right' }}>
-            <input type="number" value="2222" style={{ width: '50px' }} onChange={changePort} />
+            <input type="number" value={tunnel.clientPort} style={{ width: '50px' }} onChange={changePort} />
         </div>
     );
 };
