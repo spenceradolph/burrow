@@ -30,6 +30,14 @@ type TunnelType = {
     targetServiceId: ServiceType['id'];
 };
 
+type PivotType = {
+    id: number;
+    hopId: BoxType['id'];
+    hopPort: ServiceType['port'];
+    targetService: ServiceType['id'];
+    hopService: ServiceType['id'];
+};
+
 /**
  * Represents the entire application data / schema.
  */
@@ -38,6 +46,7 @@ export type AppState = {
     services: ServiceType[];
     connections: ConnectionType[];
     tunnels: TunnelType[];
+    pivots: PivotType[];
     metaData: {
         serviceSetupIsActive: boolean; // display the popup / yellow
         newService: ServiceType; // TODO: port and name aren't actually stored here, they come from the action, consider refactoring this object? (or keep for simplicity) (same for similar values)
@@ -45,6 +54,8 @@ export type AppState = {
         newConnection: ConnectionType;
         tunnelSetupIsActive: boolean; // clicking stages
         newTunnel: TunnelType;
+        pivotSetupIsActive: boolean;
+        newPivot: PivotType;
     };
 };
 

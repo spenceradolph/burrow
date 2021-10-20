@@ -64,8 +64,18 @@ export const Menu = (Props: MenuProps) => {
         dispatch({ type: 'cancel-tunnel' });
     };
 
+    const cancelPivot = (event: MouseEvent) => {
+        event.stopPropagation();
+        dispatch({ type: 'cancel-add-pivot' });
+    };
+
     return (
-        <div style={{ ...MenuStyle, backgroundColor: state.metaData.connectionSetupIsActive || state.metaData.tunnelSetupIsActive ? 'yellow' : 'cyan' }}>
+        <div
+            style={{
+                ...MenuStyle,
+                backgroundColor: state.metaData.connectionSetupIsActive || state.metaData.tunnelSetupIsActive || state.metaData.pivotSetupIsActive ? 'yellow' : 'cyan',
+            }}
+        >
             <button style={MenuButtonStyle} onClick={clearBoxes}>
                 Clear All
             </button>
@@ -80,6 +90,9 @@ export const Menu = (Props: MenuProps) => {
             </button>
             <button style={{ ...MenuButtonStyle, visibility: state.metaData.connectionSetupIsActive ? 'visible' : 'hidden' }} onClick={cancelConnection}>
                 Cancel Connection
+            </button>
+            <button style={{ ...MenuButtonStyle, visibility: state.metaData.pivotSetupIsActive ? 'visible' : 'hidden' }} onClick={cancelPivot}>
+                Cancel Pivot
             </button>
             <button style={{ ...MenuButtonStyle, float: 'right' }} onClick={clearLocal}>
                 Clear Local Storage

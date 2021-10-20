@@ -4,6 +4,7 @@ import Draggable from 'react-draggable';
 import { useXarrow } from 'react-xarrows';
 import { ConnectionStartPoint, Service, TunnelClientPoint, TunnelHopPoint } from '../components';
 import { AppState, defaultEmptyApp, Dispatch } from '../state';
+import { Pivot } from './Pivot';
 
 const BoxStyle: Properties = {
     margin: '10px',
@@ -33,7 +34,7 @@ type BoxProps = {
 export const Box = (Props: BoxProps) => {
     const { BoxData, dispatch, state } = Props;
     const { id, name, internalAddress, externalAddress, notes } = BoxData;
-    const { services, connections } = state;
+    const { services, connections, pivots } = state;
 
     const deleteSelf = (event: MouseEvent) => {
         event.stopPropagation();
@@ -63,6 +64,11 @@ export const Box = (Props: BoxProps) => {
     const addService = (event: MouseEvent) => {
         event.stopPropagation();
         dispatch({ type: 'start-add-service', boxToAddService: BoxData });
+    };
+
+    const addPivot = (event: MouseEvent) => {
+        event.stopPropagation();
+        dispatch({ type: 'start-add-pivot', boxToAddPivot: BoxData });
     };
 
     const addConnection = (event: MouseEvent) => {
@@ -102,6 +108,12 @@ export const Box = (Props: BoxProps) => {
             return <ConnectionStartPoint key={index} connection={thisConn} state={state} dispatch={dispatch} />;
         });
 
+    const pivotComponents = pivots
+        .filter((thisPivot) => thisPivot.hopId === id)
+        .map((thisPivot, index) => {
+            return <Pivot key={index} pivot={thisPivot} state={state} dispatch={dispatch} />;
+        });
+
     const [notesHidden, setNotesHidden] = useState(true);
 
     return (
@@ -118,6 +130,9 @@ export const Box = (Props: BoxProps) => {
                 <button onClick={addService} style={BoxButtonStyle}>
                     Add Service
                 </button>
+                <button onClick={addPivot} style={{ ...BoxButtonStyle, margin: '0' }}>
+                    P
+                </button>
                 <button onClick={addConnection} style={BoxButtonStyle}>
                     Connect
                 </button>
@@ -125,6 +140,7 @@ export const Box = (Props: BoxProps) => {
                 {connectionStartPoints}
                 {tunnelClientPoints}
                 {tunnelHopPoints}
+                {pivotComponents}
                 <br />
                 <div style={{ bottom: '0px', position: 'absolute' }}>
                     <button

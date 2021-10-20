@@ -14,6 +14,19 @@ export const Service = (Props: ServiceProps) => {
 
     const clickService = (event: any) => {
         event.stopPropagation();
+        if (state.metaData.pivotSetupIsActive) {
+            if (state.metaData.newPivot.hopId === service.boxId) return;
+            dispatch({
+                type: 'add-pivot',
+                pivotToAdd: {
+                    ...state.metaData.newPivot,
+                    id: state.pivots.length ? state.pivots.slice(-1)[0].id + 1 : 1,
+                    targetService: service.id,
+                },
+            });
+            return;
+        }
+
         if (state.metaData.tunnelSetupIsActive) {
             if (
                 state.metaData.newTunnel.clientId !== defaultEmptyApp.metaData.newTunnel.clientId &&

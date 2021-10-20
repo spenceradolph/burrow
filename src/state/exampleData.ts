@@ -7,6 +7,7 @@ export const defaultEmptyApp: AppState = {
     services: [],
     connections: [],
     tunnels: [],
+    pivots: [],
     metaData: {
         serviceSetupIsActive: false,
         newService: {
@@ -29,6 +30,13 @@ export const defaultEmptyApp: AppState = {
             clientPort: -1,
             hopServiceId: -1,
             targetServiceId: -1,
+        },
+        pivotSetupIsActive: false,
+        newPivot: {
+            id: -1,
+            hopId: -1,
+            hopPort: -1,
+            targetService: -1,
         },
     },
 };

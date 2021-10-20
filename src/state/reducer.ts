@@ -219,6 +219,42 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
             return { ...currentState, tunnels };
         }
 
+        case 'start-add-pivot': {
+            return {
+                ...currentState,
+                metaData: {
+                    ...currentState.metaData,
+                    pivotSetupIsActive: true,
+                    newPivot: {
+                        ...defaultEmptyApp.metaData.newPivot,
+                        hopId: action.boxToAddPivot.id,
+                        hopPort: 2345,
+                    },
+                },
+            };
+        }
+
+        case 'cancel-add-pivot': {
+            return { ...currentState, metaData: { ...currentState.metaData, pivotSetupIsActive: false, newPivot: defaultEmptyApp.metaData.newPivot } };
+        }
+
+        case 'add-pivot': {
+            return {
+                ...currentState,
+                pivots: [...currentState.pivots, action.pivotToAdd],
+                metaData: { ...currentState.metaData, pivotSetupIsActive: false, newPivot: defaultEmptyApp.metaData.newPivot },
+            };
+        }
+
+        case 'edit-hop-port-pivot': {
+            const { hopId } = action.pivotToEdit;
+            const pivots = currentState.pivots.map((thisPivot) => {
+                if (thisPivot.hopId !== hopId) return thisPivot;
+                return action.pivotToEdit;
+            });
+            return { ...currentState, pivots };
+        }
+
         default: {
             const exhaustiveCheck: never = action;
             throw new Error(`Unhandled Action Case: ${exhaustiveCheck}`);
