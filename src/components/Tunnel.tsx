@@ -63,7 +63,13 @@ export const TunnelHopPoint = (Props: TunnelHopPointProps) => {
         const hopBoxIP = state.boxes
             .filter((thisBox) => thisBox.id === state.services.filter((thisService) => thisService.id === tunnel.hopServiceId).pop()?.boxId)
             .pop()?.externalAddress;
-        alert(`ssh user@${hopBoxIP} -L ${tunnel.clientPort}:${targetIP}:${targetPort}`);
+
+        const targetBoxId = state.boxes
+            .filter((thisBox) => thisBox.id === state.services.filter((thisService) => thisService.id === tunnel.targetServiceId).pop()?.boxId)
+            .pop()?.id;
+        const hopBoxId = state.boxes.filter((thisBox) => thisBox.id === state.services.filter((thisService) => thisService.id === tunnel.hopServiceId).pop()?.boxId).pop()?.id;
+        const isReverseTunnel = targetBoxId! < hopBoxId!;
+        alert(`ssh user@${hopBoxIP} -${isReverseTunnel ? 'R' : 'L'} ${tunnel.clientPort}:${targetIP}:${targetPort}`);
     };
 
     return (
