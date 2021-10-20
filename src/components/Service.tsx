@@ -19,6 +19,7 @@ export const Service = (Props: ServiceProps) => {
                 state.metaData.newTunnel.clientId !== defaultEmptyApp.metaData.newTunnel.clientId &&
                 state.metaData.newTunnel.hopServiceId === defaultEmptyApp.metaData.newTunnel.hopServiceId
             ) {
+                if (state.metaData.newTunnel.clientId === service.boxId) return;
                 dispatch({ type: 'tunnel-stage-1', hopService: service });
                 return;
             }
@@ -29,6 +30,7 @@ export const Service = (Props: ServiceProps) => {
         }
 
         if (state.metaData.connectionSetupIsActive) {
+            if (state.metaData.newConnection.box1Id === service.boxId) return;
             dispatch({ type: 'add-connection', serviceToConnect: service });
             return;
         }

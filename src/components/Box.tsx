@@ -105,7 +105,7 @@ export const Box = (Props: BoxProps) => {
     const [notesHidden, setNotesHidden] = useState(true);
 
     return (
-        <Draggable axis="y" onDrag={useXarrow()} onStop={useXarrow()} handle="strong">
+        <Draggable onDrag={useXarrow()} onStop={useXarrow()} handle="strong">
             <div style={{ ...BoxStyle }} onClick={boxClick} className="handle">
                 <strong>Name:</strong>
                 <input type={'text'} value={name} onChange={changeName} style={{ ...centerStyle, marginLeft: '30px' }} />
@@ -126,16 +126,20 @@ export const Box = (Props: BoxProps) => {
                 {tunnelClientPoints}
                 {tunnelHopPoints}
                 <br />
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setNotesHidden(!notesHidden);
-                    }}
-                >
-                    X
-                </button>
-                <div style={{ visibility: notesHidden ? 'hidden' : 'visible' }}>
-                    <textarea onChange={changeNotes}>{notes}</textarea>
+                <div style={{ bottom: '0px', position: 'absolute' }}>
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setNotesHidden(!notesHidden);
+                        }}
+                    >
+                        notes
+                    </button>
+                    <div style={{ visibility: notesHidden ? 'hidden' : 'visible', position: 'absolute' }}>
+                        <textarea rows={4} cols={31} onChange={changeNotes}>
+                            {notes}
+                        </textarea>
+                    </div>
                 </div>
             </div>
         </Draggable>

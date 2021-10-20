@@ -26,7 +26,7 @@ npm install
 npm start
 ```
 
-### Running
+### Deployment
 
 Compile the project using the following command and the web-files will be generated in a ./build directory, meant to act as the root of a web-server.
 (ex: 'python -m http.server 80' -> and navigating to 'localhost' in a browser)
