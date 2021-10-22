@@ -22,13 +22,14 @@ type CancelAddPivotAction = BaseAction & {
 type AddPivotAction = BaseAction & {
     type: 'add-pivot';
     pivotToAdd: AppState['pivots'][0];
+    serviceToAdd: AppState['services'][0];
 };
 
 /**
  * Delete the service.
  */
 type DeletePivotAction = BaseAction & {
-    type: 'delete-service';
+    type: 'delete-pivot';
     pivotToDelete: AppState['pivots'][0];
 };
 
@@ -40,4 +41,4 @@ type EditPivotPortAction = BaseAction & {
     pivotToEdit: AppState['pivots'][0];
 };
 
-export type AllPivotActions = StartAddPivotAction | CancelAddPivotAction | AddPivotAction | EditPivotPortAction;
+export type AllPivotActions = StartAddPivotAction | CancelAddPivotAction | AddPivotAction | EditPivotPortAction | DeletePivotAction;

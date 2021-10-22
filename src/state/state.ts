@@ -33,7 +33,7 @@ type TunnelType = {
 type PivotType = {
     id: number;
     hopId: BoxType['id'];
-    hopPort: ServiceType['port'];
+    hopPort: ServiceType['port']; // TODO: refactor this
     targetService: ServiceType['id'];
     hopService: ServiceType['id'];
 };

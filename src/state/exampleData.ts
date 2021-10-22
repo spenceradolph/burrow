@@ -36,6 +36,7 @@ export const defaultEmptyApp: AppState = {
             id: -1,
             hopId: -1,
             hopPort: -1,
+            hopService: -1,
             targetService: -1,
         },
     },
@@ -51,16 +52,26 @@ export const exampleInitialState: AppState = {
     services: [
         { id: 1, boxId: 2, port: 22, name: 'SSH' },
         { id: 2, boxId: 3, port: 80, name: 'HTTP' },
+        // { id: 3, boxId: 2, port: 2222, name: 'PIVOT' },
     ],
     connections: [],
     tunnels: [
-        {
-            id: 1,
-            clientId: 1,
-            clientPort: 2222,
-            hopServiceId: 1,
-            targetServiceId: 2,
-        },
+        // {
+        //     id: 1,
+        //     clientId: 1,
+        //     clientPort: 2222,
+        //     hopServiceId: 1,
+        //     targetServiceId: 2,
+        // },
+    ],
+    pivots: [
+        // {
+        //     id: 1,
+        //     hopId: 2,
+        //     hopPort: 2222,
+        //     hopService: 3,
+        //     targetService: 2,
+        // },
     ],
 };
 

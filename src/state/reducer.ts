@@ -87,10 +87,19 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
 
         case 'delete-service': {
             const { serviceToDelete } = action;
-            const services = currentState.services.filter((thisService) => thisService !== serviceToDelete);
+            const services2 = currentState.services.filter((thisService) => thisService !== serviceToDelete);
             const connections = currentState.connections.filter((thisConn) => thisConn.box2ServiceId !== serviceToDelete.id);
             const tunnels = currentState.tunnels.filter((thisTunn) => thisTunn.hopServiceId !== serviceToDelete.id && thisTunn.targetServiceId !== serviceToDelete.id);
-            return { ...currentState, services, connections, tunnels };
+            const pivots = currentState.pivots.filter((thisPivot) => thisPivot.targetService !== serviceToDelete.id && thisPivot.hopService !== serviceToDelete.id);
+            const servicesToDelete1 = currentState.pivots
+                .filter((thisPivot) => thisPivot.targetService === serviceToDelete.id || thisPivot.hopService === serviceToDelete.id)
+                .map((pivot) => pivot.hopService);
+            const servicesToDelete2 = currentState.pivots
+                .filter((thisPivot) => thisPivot.targetService === serviceToDelete.id || thisPivot.hopService === serviceToDelete.id)
+                .map((pivot) => pivot.targetService);
+            const servicesToDelete = [...servicesToDelete1, servicesToDelete2];
+            const services = services2.filter((service) => !servicesToDelete.includes(service.id));
+            return { ...currentState, services, connections, tunnels, pivots };
         }
 
         case 'start-add-connection': {
@@ -241,6 +250,7 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
         case 'add-pivot': {
             return {
                 ...currentState,
+                services: [...currentState.services, action.serviceToAdd],
                 pivots: [...currentState.pivots, action.pivotToAdd],
                 metaData: { ...currentState.metaData, pivotSetupIsActive: false, newPivot: defaultEmptyApp.metaData.newPivot },
             };
@@ -248,11 +258,26 @@ export const reducer = (currentState: AppState, action: AllActions): AppState =>
 
         case 'edit-hop-port-pivot': {
             const { hopId } = action.pivotToEdit;
+            const services = currentState.services.map((thisService) => {
+                if (thisService.id !== action.pivotToEdit.hopService) return thisService;
+                return {
+                    ...thisService,
+                    port: action.pivotToEdit.hopPort,
+                };
+            });
             const pivots = currentState.pivots.map((thisPivot) => {
                 if (thisPivot.hopId !== hopId) return thisPivot;
                 return action.pivotToEdit;
             });
-            return { ...currentState, pivots };
+            return { ...currentState, services, pivots };
+        }
+
+        case 'delete-pivot': {
+            const services = currentState.services.filter(
+                (thisService) => thisService.id !== action.pivotToDelete.hopService && thisService.id !== action.pivotToDelete.targetService
+            );
+            const pivots = currentState.pivots.filter((thisPivot) => thisPivot.id !== action.pivotToDelete.id);
+            return { ...currentState, services, pivots };
         }
 
         default: {

@@ -22,21 +22,21 @@ export const Pivot = (Props: PivotProps) => {
             .pop()?.externalAddress;
         const targetPort = state.services.filter((thisService) => thisService.id === pivot.targetService).pop()?.port;
         const hopPort = pivot.hopPort;
-
-        // const targetBoxId = state.boxes
-        //     .filter((thisBox) => thisBox.id === state.services.filter((thisService) => thisService.id === tunnel.targetServiceId).pop()?.boxId)
-        //     .pop()?.id;
-        // const hopBoxId = state.boxes.filter((thisBox) => thisBox.id === state.services.filter((thisService) => thisService.id === tunnel.hopServiceId).pop()?.boxId).pop()?.id;
-        // const isReverseTunnel = targetBoxId! < hopBoxId!;
-
         alert(`mknod fifo p; nc -l -v ${hopPort} 0<fifo | nc ${targetIP} ${targetPort} 1>fifo`);
+    };
+
+    const deletePivot = (event: MouseEvent) => {
+        event.stopPropagation();
+        if (!state.metaData.connectionSetupIsActive && !state.metaData.tunnelSetupIsActive && !state.metaData.serviceSetupIsActive && !state.metaData.pivotSetupIsActive) {
+            dispatch({ type: 'delete-pivot', pivotToDelete: pivot });
+        }
     };
 
     return (
         <>
             <div id={`pivot-${JSON.stringify(pivot)}`} style={{ position: 'relative', float: 'right' }}>
                 <input type="number" value={pivot.hopPort} style={{ width: '50px' }} onChange={changePort} />
-                Pivot
+                <div onClick={deletePivot}>Pivot</div>
             </div>
             <Xarrow start={`pivot-${JSON.stringify(pivot)}`} end={`service-${pivot.targetService}`} />
             <button onClick={generatePivotCommand} style={{ float: 'right', position: 'relative' }}>

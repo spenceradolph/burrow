@@ -2,9 +2,8 @@ import { Properties } from 'csstype';
 import { ChangeEvent, MouseEvent, useState } from 'react';
 import Draggable from 'react-draggable';
 import { useXarrow } from 'react-xarrows';
-import { ConnectionStartPoint, Service, TunnelClientPoint, TunnelHopPoint } from '../components';
+import { ConnectionStartPoint, Service, TunnelClientPoint, TunnelHopPoint, Pivot } from '../components';
 import { AppState, defaultEmptyApp, Dispatch } from '../state';
-import { Pivot } from './Pivot';
 
 const BoxStyle: Properties = {
     margin: '10px',

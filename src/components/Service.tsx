@@ -10,18 +10,26 @@ type ServiceProps = {
 
 export const Service = (Props: ServiceProps) => {
     const { service, state, dispatch } = Props;
-    const { port, name } = service;
+    const { port, name, id } = service;
 
     const clickService = (event: any) => {
         event.stopPropagation();
         if (state.metaData.pivotSetupIsActive) {
             if (state.metaData.newPivot.hopId === service.boxId) return;
+            const newService: AppState['services'][0] = {
+                id: state.services.length ? state.services.slice(-1)[0].id + 1 : 1,
+                boxId: state.metaData.newPivot.hopId,
+                name: 'pivot',
+                port: state.metaData.newPivot.hopPort,
+            };
             dispatch({
                 type: 'add-pivot',
+                serviceToAdd: newService,
                 pivotToAdd: {
                     ...state.metaData.newPivot,
                     id: state.pivots.length ? state.pivots.slice(-1)[0].id + 1 : 1,
-                    targetService: service.id,
+                    targetService: id,
+                    hopService: newService.id,
                 },
             });
             return;
